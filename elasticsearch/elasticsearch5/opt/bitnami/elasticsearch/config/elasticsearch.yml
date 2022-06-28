@@ -1,0 +1,21 @@
+http:
+  port: 9200
+  #启用跨域，注意真实环境是没有启用这玩意的
+  cors:
+    enabled: true
+    allow-origin: "*"
+path:
+  data: /bitnami/elasticsearch/data
+transport:
+  tcp:
+    port: 9300
+network:
+  # 要改记得换IP
+  bind_host: 0.0.0.0
+cluster:
+  name: elasticsearch-cluster-qa
+node:
+  name: elasticsearch01
+  master: true
+  data: true
+  ingest: false
