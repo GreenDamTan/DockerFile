@@ -17,7 +17,7 @@ COPY --from=jre-build /javaruntime $JAVA_HOME
 ENV LC_ALL=C.UTF-8 LANGUAGE=C.UTF-8 LANG=C.UTF-8
 # 需要限制内存可以加-Xmx1024m
 # -Xmx1024m 限制内存 -Xtune:virtualized 虚拟化环境优化 -Xshareclasses
-ENV JAVA_OPTS="-Xtune:virtualized -Xshareclasses"
+ENV JAVA_OPTS="$JAVA_OPTS -Xtune:virtualized -Xshareclasses -Dhudson.model.DownloadService.noSignatureCheck=true"
 # 更换软件源就看需要不需要了
 #RUN sed -i 's#http://deb.debian.org/#https://mirrors.aliyun.com/#g' /etc/apt/sources.list && \
 #    sed -i 's#http://security.debian.org/#https://mirrors.aliyun.com/#g' /etc/apt/sources.list
