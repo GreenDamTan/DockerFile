@@ -27,3 +27,9 @@ jenkins_home应改为具体的宿主机目录，你喜欢的话比如"/var/jenki
 其他没啥特别的了，可以参考[Jenkins官方的镜像文档](https://github.com/jenkinsci/docker/blob/master/README.md)
 
 有啥想整的欢迎提[issues](https://github.com/GreenDamTan/DockerFile/issues)
+
+### 路标
+
+https://hub.docker.com/repository/docker/makedie/jenkins/tags
+
+https://github.com/GreenDamTan/DockerFile/tree/main/Jenkins

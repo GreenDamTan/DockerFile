@@ -27,3 +27,9 @@ java -jar /opt/atlassian/jira/atlassian-agent.jar -p jira -m aaa@bbb.com -n my_n
 ```
 
 然后就有码可以和谐了
+
+### 路标
+
+https://hub.docker.com/r/makedie/jira-software/tags
+
+https://github.com/GreenDamTan/DockerFile/tree/main/atlassian/jira/jira8
