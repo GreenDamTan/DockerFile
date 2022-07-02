@@ -6,6 +6,8 @@
 
 这东西更换openj9的感知极大，不信可以自己对比
 
+有啥想整的欢迎提[issues](https://github.com/GreenDamTan/DockerFile/issues)
+
 ### 改动点
 
 修改时区为"中国/上海"

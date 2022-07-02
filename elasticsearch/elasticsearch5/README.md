@@ -8,6 +8,8 @@
 
 相关的config在 [这里](https://github.com/GreenDamTan/DockerFile/tree/main/elasticsearch/elasticsearch5/opt/bitnami/elasticsearch/config) 可以自行调整修改。想搞成集群也不是不行，测试而已没必要。
 
+有啥想整的欢迎提[issues](https://github.com/GreenDamTan/DockerFile/issues)
+
 ### 改动点
 
 更换时区为“中国/上海”
