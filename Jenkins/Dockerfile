@@ -1,4 +1,4 @@
-FROM adoptopenjdk:11.0.11_9-jdk-openj9-0.26.0-focal as jre-build
+FROM ibm-semeru-runtimes:open-17.0.3_7-jdk-focal as jre-build
 RUN jlink \
          --add-modules ALL-MODULE-PATH \
          --no-man-pages \
