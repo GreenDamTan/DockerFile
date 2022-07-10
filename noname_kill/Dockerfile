@@ -6,7 +6,8 @@ RUN mkdir -p $path &&\
     git remote add origin https://github.com/libccy/noname.git && \
     # v1.9.114.3.1
     git fetch origin db168ea5e03e6200ab94ed5dceaf4b114066ac1f &&\
-    git reset --hard FETCH_HEAD
+    git reset --hard FETCH_HEAD &&\
+    rm -rf $path/.git
 FROM nginx:1.21
 USER root
 LABEL maintainer="GreenDamTan"
