@@ -6,7 +6,7 @@ RUN sed -i 's|^deb http://ftp.debian.org|deb https://mirrors.ustc.edu.cn|g' /etc
 COPY systemctl3.py /usr/bin/systemctl
 COPY journalctl3.py /usr/bin/journalctl
 RUN apt update &&\
-    apt install -y --no-install-recommends ca-certificates wget python3 screen vim systemd && \
+    apt install -y --no-install-recommends ca-certificates wget python3 screen vim systemd netstat && \
     chmod +x /usr/bin/systemctl && \
     chmod +x /usr/bin/journalctl && \
     ln -sf /usr/bin/systemctl /bin/systemctl && \
