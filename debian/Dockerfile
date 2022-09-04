@@ -12,4 +12,4 @@ RUN chmod +x /usr/bin/systemctl && \
     rm -rf /var/lib/apt/lists/* \
 RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg
-CMD ['/bin/bash','-c','/usr/bin/systemctl --init && /bin/bash']
+CMD ['/bin/bash','-c','/usr/bin/systemctl && /usr/bin/systemctl --init && /bin/bash']
