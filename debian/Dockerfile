@@ -5,12 +5,12 @@ RUN sed -i 's|^deb http://ftp.debian.org|deb https://mirrors.ustc.edu.cn|g' /etc
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list
 COPY systemctl3.py /usr/bin/systemctl
 COPY journalctl3.py /usr/bin/journalctl
-RUN chmod +x /usr/bin/systemctl && \
+RUN apt update &&\
+    apt install -y wget python3 screen vim systemd && \
+    chmod +x /usr/bin/systemctl && \
     chmod +x /usr/bin/journalctl && \
     ln -sf /usr/bin/systemctl /bin/systemctl && \
     ln -sf /usr/bin/journalctl /bin/journalctl &&\
-    apt update &&\
-    apt install -y wget python3 screen vim &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
