@@ -7,7 +7,7 @@ COPY systemctl3.py /usr/bin/systemctl
 RUN chmod +x /usr/bin/systemctl && \
     ln -sf /usr/bin/systemctl /bin/systemctl &&\
     apt update &&\
-    apt install -y wget python3 &&\
+    apt install -y wget python3 screen vim &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
