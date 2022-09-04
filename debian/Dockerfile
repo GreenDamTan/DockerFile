@@ -4,7 +4,7 @@ RUN sed -i 's|^deb http://ftp.debian.org|deb https://mirrors.ustc.edu.cn|g' /etc
 COPY systemctl3.py /usr/bin/systemctl
 RUN chmod +x /usr/bin/systemctl &&\
     apt update &&\
-    apt install wget python3 &&\
+    apt install -y wget python3 &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 RUN wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg &&\
