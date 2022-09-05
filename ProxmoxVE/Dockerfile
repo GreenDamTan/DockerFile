@@ -1,17 +1,16 @@
 FROM debian:bullseye-20220822 as builder1
 #base mirrow
 ENV DEBIAN_FRONTEND=noninteractiv
-RUN sed -i 's|^deb http://ftp.debian.org|deb http://mirrors.ustc.edu.cn|g' /etc/apt/sources.list &&\
-    sed -i 's|^deb http://security.debian.org|deb http://mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list &&\
-    sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list &&\
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list &&\
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list
 
-RUN echo "root:root"|chpasswd &&\
-    echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
-    wget http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg &&\
+RUN echo "root:root"|chpasswd && \
     apt update &&\
     apt install -y --no-install-recommends ca-certificates wget curl screen vim systemctl busybox && \
     busybox --install &&\
+    echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
+    wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg &&\
+    apt update &&\
     #intall proxmox-ve without recommends. ifupdown2 will install failed but ok
     apt-get -y --no-install-recommends  install  proxmox-ve=7.2-1 || echo ok && \
     #clean
