@@ -1,10 +1,11 @@
 FROM debian:bullseye-20220822 as builder1
 #base mirrow
 ENV DEBIAN_FRONTEND=noninteractiv
-RUN sed -i 's|^deb http://ftp.debian.org|deb https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list &&\
-    sed -i 's|^deb http://security.debian.org|deb https://mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list &&\
+RUN sed -i 's|^deb http://ftp.debian.org|deb http://mirrors.ustc.edu.cn|g' /etc/apt/sources.list &&\
+    sed -i 's|^deb http://security.debian.org|deb http://mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list &&\
     sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list &&\
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list
+
 RUN echo "root:root"|chpasswd &&\
     echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget http://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg &&\
@@ -16,8 +17,8 @@ RUN echo "root:root"|chpasswd &&\
     #clean
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
-RUN #repacked proxmox-ve \
-    wget https://mirrors.ustc.edu.cn/proxmox/debian/dists/bullseye/pve-no-subscription/binary-amd64/proxmox-ve_7.2-1_all.deb && \
+#repacked proxmox-ve
+RUN wget https://mirrors.ustc.edu.cn/proxmox/debian/dists/bullseye/pve-no-subscription/binary-amd64/proxmox-ve_7.2-1_all.deb && \
     mkdir /tmp/pve && \
     dpkg -X proxmox-ve_7.2-1_all.deb /tmp/pve/ && \
     dpkg -e proxmox-ve_7.2-1_all.deb /tmp/pve/DEBIAN && \
