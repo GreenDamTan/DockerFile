@@ -6,7 +6,10 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list &&\
 
 RUN echo "root:root"|chpasswd && \
     apt update &&\
-    apt install -y --no-install-recommends ca-certificates wget curl screen vim systemctl busybox && \
+    apt install -y --no-install-recommends ca-certificates && \
+    sed -i 's/http:/https:/g' /etc/apt/sources.list && \
+    apt update &&\
+    apt install -y --no-install-recommends wget curl screen vim systemctl busybox && \
     busybox --install &&\
     echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve bullseye pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg &&\
