@@ -38,18 +38,13 @@ RUN wget https://mirrors.ustc.edu.cn/proxmox/debian/dists/bullseye/pve-no-subscr
     dpkg -i /tmp/*.deb || echo ok &&\
     rm -rf /*.deb /tmp/*
 
-RUN systemctl stop pve-ha-lrm.service &&\
-    systemctl stop pve-ha-crm.service &&\
-    systemctl disable pve-ha-lrm.service &&\
+RUN systemctl disable pve-ha-lrm.service &&\
     systemctl disable pve-ha-crm.service &&\
     #no HA
     systemctl disable pve-firewall.service &&\
-    systemctl stop pve-firewall.service &&\
     #no firewall
-    systemctl stop pvescheduler.service &&\
     systemctl disable pvescheduler.service &&\
     #no pvescheduler
-    systemctl stop spiceproxy.service &&\
     systemctl disable spiceproxy.service
     #no spice
 
