@@ -1,6 +1,6 @@
 FROM makedie/proxmox_ve:7.3-3 as builder1
 #base mirrow
-ENV DEBIAN_FRONTEND=noninteractiv
+ARG DEBIAN_FRONTEND=noninteractive
 RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/ceph-pacific bullseye main">> /etc/apt/sources.list &&\
     echo "deb https://mirrors.ustc.edu.cn/debian/ bullseye-backports main contrib non-free">> /etc/apt/sources.list &&\
     rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
