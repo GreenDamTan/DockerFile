@@ -33,7 +33,7 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && rustup toolchain install nightly && 
 RUN cd /opt &&\
     git clone https://salsa.debian.org/rust-team/debcargo.git &&\
     cd /opt/debcargo &&\
-    cargo build --release &&\
+    $HOME/.cargo/bin/cargo build --release &&\
     ln -s /opt/debcargo/target/release/debcargo /usr/bin/
 
 CMD [ "bash"]
