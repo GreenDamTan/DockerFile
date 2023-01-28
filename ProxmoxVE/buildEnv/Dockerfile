@@ -12,7 +12,7 @@ RUN apt-get install -y devscripts  build-essential librust-openssl-sys-dev git g
     libglib2.0-dev libpve-access-control libpve-apiclient-perl libquorum-dev librrd-dev librrds-perl \
     libsqlite3-dev libtest-mockmodule-perl libuuid-perl rrdcached sqlite3  rsync \
     libauthen-pam-perl libnet-ldap-perl  libpve-cluster-perl pve-cluster \
-    libjs-marked pve-eslint esbuild quilt   bash-completion dh-apparmor docbook2x libapparmor-dev libcap-dev \
+    libjs-marked esbuild quilt bash-completion dh-apparmor docbook2x libapparmor-dev libcap-dev \
     libgnutls28-dev libseccomp-dev meson  libarchive-dev   libanyevent-perl   dh-python python3-all python3-setuptools python3-docutils \
     liblocale-po-perl  help2man libpam0g-dev  libpve-storage-perl lxc-pve  \
     libjpeg62-turbo-dev libpng-dev unifont  libspice-protocol-dev libspice-server-dev  libcap-ng-dev \
