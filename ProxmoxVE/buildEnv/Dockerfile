@@ -33,8 +33,7 @@ RUN apt-get update &&\
     #clean
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >>rustinit.sh && \
-RUSTUP_INIT_SKIP_PATH_CHECK=yes sh rustinit.sh --default-toolchain  nightly  --profile complete -y
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
 RUN rustup toolchain install nightly && rustup toolchain link system /usr && rustup default system
 RUN cd /opt &&\
     git clone https://salsa.debian.org/rust-team/debcargo.git &&\
