@@ -23,16 +23,11 @@ RUN apt-get update &&\
     libnuma-dev libpixman-1-dev libproxmox-backup-qemu0-dev  librbd-dev \
     libsdl1.2-dev  liburing-dev libusb-1.0-0-dev libusbredirparser-dev \
     libvirglrenderer-dev libzstd-dev python3-sphinx python3-sphinx-rtd-theme texi2html xfslibs-dev \
-    abigail-tools  libpam0g-dev python3-cffi python3-all-dev  || echo ok &&\
+    abigail-tools  libpam0g-dev python3-cffi python3-all-dev cargo debcargo || echo ok &&\
     #clean
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
-#install rust
-RUN apt-get update &&\
-    apt-get install cargo debcargo -y &&\
-    #clean
-    apt-get clean &&\
-    rm -rf /var/lib/apt/lists/*
+
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
 RUN rustup toolchain install nightly && rustup toolchain link system /usr && rustup default system
 RUN cd /opt &&\
