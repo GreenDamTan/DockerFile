@@ -29,7 +29,7 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/*
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
-RUN rustup toolchain install nightly && rustup toolchain link system /usr && rustup default system
+RUN source $HOME/.cargo/env && rustup toolchain install nightly && rustup toolchain link system /usr && rustup default system
 RUN cd /opt &&\
     git clone https://salsa.debian.org/rust-team/debcargo.git &&\
     cd /opt/debcargo &&\
