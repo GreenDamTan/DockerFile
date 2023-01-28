@@ -6,7 +6,7 @@ RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/ceph-pacific bullseye m
     rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
     cat /etc/apt/sources.list
 RUN apt-get update
-RUN apt install -y devscripts  build-essential librust-openssl-sys-dev git git-email pkg-config debhelper pve-doc-generator  \
+RUN apt-get install -y devscripts  build-essential librust-openssl-sys-dev git git-email pkg-config debhelper pve-doc-generator  \
     cmake bison dwarves flex libdw-dev libelf-dev libiberty-dev lz4 zstd librados-dev \
     libtest-mockmodule-perl  check libcmap-dev libcorosync-common-dev libcpg-dev libfuse-dev \
     libglib2.0-dev libpve-access-control libpve-apiclient-perl libquorum-dev librrd-dev librrds-perl \
@@ -24,7 +24,7 @@ RUN apt install -y devscripts  build-essential librust-openssl-sys-dev git git-e
     libvirglrenderer-dev libzstd-dev python3-sphinx python3-sphinx-rtd-theme texi2html xfslibs-dev \
     abigail-tools  libpam0g-dev python3-cffi python3-all-dev
 #install rust
-RUN apt install cargo debcargo -y
+RUN apt-get install cargo debcargo -y
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >>rustinit.sh && \
 RUSTUP_INIT_SKIP_PATH_CHECK=yes sh rustinit.sh --default-toolchain  nightly  --profile complete -y
 RUN rustup toolchain install nightly && rustup toolchain link system /usr && rustup default system
