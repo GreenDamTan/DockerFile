@@ -1,8 +1,8 @@
 FROM makedie/proxmox_ve:7.3-3 as builder1
 #base mirrow
 ENV DEBIAN_FRONTEND=noninteractiv
-RUN echo -e "\ndeb https://mirrors.ustc.edu.cn/proxmox/debian/ceph-pacific bullseye main">> /etc/apt/sources.list &&\
-    echo -e "\ndeb https://mirrors.ustc.edu.cn/debian/ bullseye-backports main contrib non-free">> /etc/apt/sources.list
+RUN echo -e "deb https://mirrors.ustc.edu.cn/proxmox/debian/ceph-pacific bullseye main">> /etc/apt/sources.list &&\
+    echo -e "deb https://mirrors.ustc.edu.cn/debian/ bullseye-backports main contrib non-free">> /etc/apt/sources.list
 RUN apt-get update
 RUN apt install -y devscripts  build-essential librust-openssl-sys-dev git git-email pkg-config debhelper pve-doc-generator  \
     cmake bison dwarves flex libdw-dev libelf-dev libiberty-dev lz4 zstd librados-dev \
