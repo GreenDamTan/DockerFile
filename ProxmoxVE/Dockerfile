@@ -15,30 +15,34 @@ RUN echo "root:root"|chpasswd && \
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg &&\
     apt update &&\
     #intall proxmox-ve without recommends. ifupdown2 will install failed but ok
-    apt-get -y --no-install-recommends  install  proxmox-ve=7.3-1 || echo ok && \
+    apt-get -y --no-install-recommends  install pve-manager=7.4-13 proxmox-ve=7.4-1 || echo ok && \
     #clean
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 #repacked proxmox-ve
-RUN wget https://mirrors.ustc.edu.cn/proxmox/debian/dists/bullseye/pve-no-subscription/binary-amd64/proxmox-ve_7.3-1_all.deb && \
+RUN wget https://mirrors.ustc.edu.cn/proxmox/debian/dists/bullseye/pve-no-subscription/binary-amd64/proxmox-ve_7.4-1_all.deb && \
     mkdir /tmp/pve && \
-    dpkg -X proxmox-ve_7.3-1_all.deb /tmp/pve/ && \
-    dpkg -e proxmox-ve_7.3-1_all.deb /tmp/pve/DEBIAN && \
+    dpkg -X proxmox-ve_7.4-1_all.deb /tmp/pve/ && \
+    dpkg -e proxmox-ve_7.4-1_all.deb /tmp/pve/DEBIAN && \
     sed -i "s/pve-kernel-helper,//g" /tmp/pve/DEBIAN/control && \
     sed -i "s/pve-kernel-5.15,//g" /tmp/pve/DEBIAN/control && \
     dpkg-deb -Zxz  -b /tmp/pve/ /tmp/ && \
     #repacked pve-manager
-    wget https://mirrors.ustc.edu.cn/proxmox/debian/dists/bullseye/pve-no-subscription/binary-amd64/pve-manager_7.3-3_amd64.deb && \
+    wget https://mirrors.ustc.edu.cn/proxmox/debian/dists/bullseye/pve-no-subscription/binary-amd64/pve-manager_7.4-13_amd64.deb && \
     mkdir /tmp/pve-manager && \
-    dpkg -X pve-manager_7.3-3_amd64.deb  /tmp/pve-manager/ && \
-    dpkg -e pve-manager_7.3-3_amd64.deb /tmp/pve-manager/DEBIAN && \
+    dpkg -X pve-manager_7.4-13_amd64.deb  /tmp/pve-manager/ && \
+    dpkg -e pve-manager_7.4-13_amd64.deb /tmp/pve-manager/DEBIAN && \
     sed -i "s/ifupdown2 (>= 2.0.1-1+pve8) | ifenslave (>= 2.6),//g" /tmp/pve-manager/DEBIAN/control && \
     dpkg-deb -Zxz  -b /tmp/pve-manager/ /tmp &&\
     ##install again
     dpkg -i /tmp/*.deb || echo ok &&\
     rm -rf /*.deb /tmp/*
 
-RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
+RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list && \
+    systemctl disable pvestatd pvefw-logger corosync spiceproxy &&\
+    systemctl disable getty@tty1 && \
+    systemctl disable postfix && \
+    systemctl disable ssh.service &&\
     systemctl disable pve-ha-lrm.service &&\
     systemctl disable pve-ha-crm.service &&\
     #no HA
@@ -46,7 +50,7 @@ RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
     #no firewall
     systemctl disable pvescheduler.service &&\
     #no pvescheduler
-    systemctl disable spiceproxy.service
+    systemctl disable spiceproxy.service || echo ok
     #no spice
 
 STOPSIGNAL SIGINT
