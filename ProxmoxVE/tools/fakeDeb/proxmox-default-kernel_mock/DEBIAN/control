@@ -1,0 +1,5 @@
+Package: proxmox-kernel-helper
+Version: 9.9.9
+Maintainer: github.com/GreenDamTan
+Architecture: all
+Description: proxmox-kernel-helper mock by GreenDamTan

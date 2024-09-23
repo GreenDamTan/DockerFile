@@ -18,8 +18,16 @@ services:
       - NET_ADMIN
     ports:
       - 8006:8006
-    #volumes:
-      #- /usr/dockerFile/pve/vz:/var/lib/vz
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
+      - /sys/fs/fuse:/sys/fs/fuse
+      # - /usr/dockerFile/pve/vz:/var/lib/vz
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /var/cache
+      - /run/lock
     extra_hosts:
       - "pve:127.0.0.1"
       - "shop.maurer-it.com:127.0.0.1"

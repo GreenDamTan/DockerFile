@@ -1,0 +1,5 @@
+Package: proxmox-default-kernel
+Version: 9.9.9
+Maintainer: github.com/GreenDamTan
+Architecture: all
+Description: proxmox-default-kernel mock by GreenDamTan

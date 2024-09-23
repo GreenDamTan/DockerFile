@@ -1,0 +1,5 @@
+Package: ifenslave
+Version: 9.9
+Maintainer: github.com/GreenDamTan
+Architecture: all
+Description: ifenslave mock by GreenDamTan

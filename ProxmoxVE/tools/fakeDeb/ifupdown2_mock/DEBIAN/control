@@ -1,0 +1,5 @@
+Package: ifupdown2
+Version: 9.9
+Maintainer: github.com/GreenDamTan
+Architecture: all
+Description: ifupdown2 mock by GreenDamTan
