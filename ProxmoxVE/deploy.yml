@@ -1,0 +1,28 @@
+services:
+  pve:
+    image: makedie/proxmox_ve:8.2.6
+    container_name: pve-8.2.6
+    tty: true
+    devices:
+      - /dev/dri
+      - /dev/fuse
+      - /dev/kvm
+      - /dev/vfio
+      - /dev/nvidia0
+      - /dev/nvidiactl
+      - /dev/nvidia-uvm
+      - /dev/nvidia-uvm-tools
+      - /dev/nvidia-vgpu1
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+    #volumes:
+      #- /usr/dockerFile/pve/vz:/var/lib/vz
+    extra_hosts:
+      - "pve:127.0.0.1"
+      - "shop.maurer-it.com:127.0.0.1"
+    hostname: pve
+    stop_grace_period: 2m
+    privileged: true

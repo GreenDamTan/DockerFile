@@ -2,8 +2,16 @@ FROM debian:bookworm-20240904 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
-ARG pve_manager_ver=8.2.4
+ARG pve_manager_ver=8.2.6
 ARG proxmox_ve_ver=8.2.0
+
+LABEL GreenDamTan="GreenDamTan"
+LABEL maintainer="github.com/GreenDamTan"
+LABEL git="github.com/GreenDamTan/DockerFile"
+
+USER 0:0
+EXPOSE 8006
+
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources &&\
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources
 
@@ -20,54 +28,59 @@ RUN apt update &&\
     echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\
     apt update &&\
-    #intall proxmox-ve without recommends. ifupdown2 will install failed but ok
+    echo "intall proxmox-ve without recommends. ifupdown2 will install failed but ok" &&\
     apt-get -y --no-install-recommends install pve-manager=${pve_manager_ver} proxmox-ve=${proxmox_ve_ver} || echo ok && \
-    #clean \
+    echo "#clean" &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
-#repacked proxmox-ve
-RUN wget ${pve_mirror_url}/proxmox-ve_${proxmox_ve_ver}_all.deb && \
+
+RUN echo "repacked proxmox-ve" &&\
+    wget ${pve_mirror_url}/proxmox-ve_${proxmox_ve_ver}_all.deb && \
     mkdir /tmp/pve && \
     dpkg -X proxmox-ve_${proxmox_ve_ver}_all.deb /tmp/pve/ && \
     dpkg -e proxmox-ve_${proxmox_ve_ver}_all.deb /tmp/pve/DEBIAN && \
-    # cat /tmp/pve/DEBIAN && \
+    # cat /tmp/pve/DEBIAN/control && \
     sed -i "s/proxmox-kernel-helper (>= [0-99].[0-99].[0-99]),//" /tmp/pve/DEBIAN/control &&\
     sed -i "s/proxmox-default-kernel,//g" /tmp/pve/DEBIAN/control &&\
-    cat /tmp/pve/DEBIAN &&\
+    cat /tmp/pve/DEBIAN/control &&\
     dpkg-deb -Zxz  -b /tmp/pve/ /tmp/ && \
-    #repacked pve-manager
+    echo "repacked pve-manager" &&\
     wget ${pve_mirror_url}/pve-manager_${pve_manager_ver}_amd64.deb && \
     mkdir /tmp/pve-manager && \
     dpkg -X pve-manager_${pve_manager_ver}_amd64.deb  /tmp/pve-manager/ && \
     dpkg -e pve-manager_${pve_manager_ver}_amd64.deb /tmp/pve-manager/DEBIAN && \
-    cat /tmp/pve-manager/DEBIAN &&\
+    cat /tmp/pve-manager/DEBIAN/control &&\
     sed -i "s/ifupdown2 (>= 3.0) | ifenslave (>= 2.6),//g" /tmp/pve-manager/DEBIAN/control && \
     dpkg-deb -Zxz  -b /tmp/pve-manager/ /tmp &&\
-    ##install again
+    echo "install again" &&\
     dpkg -i /tmp/*.deb || echo ok &&\
     rm -rf *.deb /tmp/pve*
 
 COPY tools/pve-fake-subscription_0.0.9.deb /tmp/
 RUN dpkg -i /tmp/pve-fake-subscription_*.deb &&\
-    rm -rf /tmp/pve-fake-subscription_*.deb
+    rm -rf /tmp/pve-fake-subscription_*.deb &&\
+    /usr/bin/pve-fake-subscription
 
 RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list && \
-    systemctl disable pvefw-logger corosync &&\
+    systemctl disable corosync &&\
     systemctl disable apparmor.service &&\
     systemctl disable getty@tty1 && \
     systemctl disable postfix && \
     systemctl disable ssh.service &&\
+    echo "no HA" &&\
     systemctl disable pve-ha-lrm.service &&\
     systemctl disable pve-ha-crm.service &&\
-    #no HA
+    echo "no firewall" &&\
     systemctl disable pve-firewall.service &&\
-    #no firewall
+    systemctl disable pvefw-logger &&\
+    echo "no pvescheduler" &&\
     systemctl disable pvescheduler.service &&\
-    #no pvescheduler
+    echo "no spice" &&\
     systemctl disable spiceproxy.service || echo ok
-    #no spice
+
 RUN systemctl enable pvestatd.service &&\
-    systemctl enable pveproxy.service
+    systemctl enable pveproxy.service &&\
+    systemctl enable pvebanner.service
 
 STOPSIGNAL SIGINT
 CMD [ "/lib/systemd/systemd", "log-level=info", "unit=sysinit.target"]
