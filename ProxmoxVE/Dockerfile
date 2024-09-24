@@ -67,6 +67,8 @@ RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list && \
     echo "no spice" &&\
     systemctl disable spiceproxy.service || echo ok
 
+RUN mv /usr/lib/systemd/system/pve-firewall.service /usr/lib/systemd/system/pve-firewall.service.bak
+
 RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\
     systemctl enable pvebanner.service

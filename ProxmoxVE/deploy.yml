@@ -19,8 +19,8 @@ services:
     ports:
       - 8006:8006
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
+      #- /sys/fs/cgroup:/sys/fs/cgroup:ro
+      #- /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
       - /sys/fs/fuse:/sys/fs/fuse
       # - /usr/dockerFile/pve/vz:/var/lib/vz
     tmpfs:
