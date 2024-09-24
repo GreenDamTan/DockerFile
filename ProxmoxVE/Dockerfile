@@ -2,7 +2,7 @@ FROM debian:bookworm-20240904 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
-ARG pve_manager_ver=8.2.6
+ARG pve_manager_ver=8.2.7
 ARG proxmox_ve_ver=8.2.0
 
 ENV container=docker
@@ -12,7 +12,7 @@ LABEL maintainer="github.com/GreenDamTan"
 LABEL git="github.com/GreenDamTan/DockerFile"
 
 USER 0:0
-EXPOSE 8006
+EXPOSE 8006:8006
 
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources &&\
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources
@@ -23,6 +23,14 @@ RUN echo "root:root"|chpasswd && \
     sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources && \
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
+
+RUN --mount=type=bind,target=/sys/fs/cgroup
+RUN --mount=type=bind,target=/sys/fs/fuse
+RUN --mount=type=tmpfs,destination=/tmp
+RUN --mount=type=tmpfs,destination=/var/cache
+RUN --mount=type=tmpfs,destination=/var/run
+RUN --mount=type=tmpfs,destination=/run
+RUN --mount=type=tmpfs,destination=/run/lock
 
 COPY tools/fakeDeb /tmp/
 RUN echo "build mock" &&\
@@ -36,7 +44,7 @@ RUN echo "build mock" &&\
 RUN apt update &&\
     apt install -y --no-install-recommends wget curl screen vim systemctl busybox &&\
     busybox --install &&\
-    echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\
     apt update &&\
     echo "install pve-manager and proxmox-ve" &&\
