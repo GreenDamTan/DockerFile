@@ -1,24 +1,49 @@
-FROM debian:bookworm-20240812 as builder1
+FROM debian:bookworm-20240926 as builder1
 #base mirrow
-ARG DEBIAN_FRONTEND=noninteractive
+
+LABEL GreenDamTan="GreenDamTan"
+LABEL maintainer="github.com/GreenDamTan"
+LABEL git="github.com/GreenDamTan/DockerFile"
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV container=docker
+
 RUN echo "root:root"|chpasswd && \
     apt update &&\
-    apt install -y --no-install-recommends ca-certificates && \
-    sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources && \
+    apt install -y --no-install-recommends ca-certificates apt-utils &&\
+    apt-get clean &&\
+    sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources &&\
     apt update
-RUN apt install -y systemd && \
+
+RUN apt install -y --no-install-recommends systemd &&\
+    systemctl set-default multi-user.target &&\
     apt install -y --no-install-recommends wget curl screen vim busybox &&\
+    apt-get clean &&\
     busybox --install
-RUN wget http://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.13-300.deb &&\
-    dpkg -i TRIM-0.8.13-300.deb &&\
-    rm -f TRIM-0.8.13-300.deb
-RUN apt install -y --no-install-recommends postgresql-15 libpci-dev \
-    libsqlite3-0 libbluray2 libsmbclient libturbojpeg0 \
-    libtcmalloc-minimal4 libopenmpt0 libyuv0 libnl-3-200 libzmq5 libglib2.0-0 \
-    libvpx7 libnm0 libexiv2-27 libaio1 libmagick++-6.q16-8 libwebpmux3 \
-    libnl-route-3-200 libupnp13 dmidecode libraw20 libzvbi0
+
+RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.20-394.deb &&\
+    dpkg -i TRIM-0.8.20-394.deb &&\
+    rm -f TRIM-0.8.20-394.deb
+
 COPY etc.tar /usr/trim
 RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
+
+RUN apt install -y --no-install-recommends postgresql-15 libcurl4 \
+    ifenslave wpasupplicant network-manager pppoe pppoeconf \
+    lvm2 mdadm btrfs-progs parted smartmontools cifs-utils dosfstools exfat-fuse ntfs-3g hdparm &&\
+    apt-get clean
+
+RUN apt install -y --no-install-recommends libturbojpeg0 libraw-bin libopencv-core406 \
+    libopencv-imgcodecs406 libyuv0 libheif1 libmagick++-6.q16-8 libexiv2-27 libgoogle-perftools4 \
+    libzmq5 &&\
+    apt-get clean
+
+RUN apt install -y --no-install-recommends libpcre3 libpci-dev ffmpeg \
+    libsqlite3-0 libbluray2 libsmbclient \
+    libtcmalloc-minimal4 libopenmpt0 libnl-3-200 libglib2.0-0 \
+    libvpx7 libnm0 libaio1 libwebpmux3 \
+    libnl-route-3-200 libupnp13 dmidecode libzvbi0 sudo libmp3lame0 libopus0 libtheora0 &&\
+    apt-get clean
 
 RUN ln -s /usr/trim/lib/libndev.so /usr/lib/x86_64-linux-gnu/libndev.so && \
     ln -s /usr/trim/lib/libtrimrpc.so.0.1.0 /usr/lib/x86_64-linux-gnu/libtrimrpc.so.0.1.0 && \
@@ -27,12 +52,47 @@ RUN ln -s /usr/trim/lib/libndev.so /usr/lib/x86_64-linux-gnu/libndev.so && \
     ln -s /usr/trim/lib/libppjson.so /usr/lib/x86_64-linux-gnu/libppjson.so && \
     ln -s /usr/trim/lib/libnebula.so /usr/lib/x86_64-linux-gnu/libnebula.so && \
     ln -s /usr/trim/lib/libntoken.so /usr/lib/x86_64-linux-gnu/libntoken.so
+
 RUN rm -rf /usr/sbin/useradd && \
-    ln -s /usr/trim/bin/useradd /usr/sbin/useradd
-RUN sed -e 's/peer/trust/' -e 's/scram-sha-256/trust/' -i /etc/postgresql/15/main/pg_hba.conf && \
-    echo "host trim_connect tc 127.0.0.1/32 trust" >> /etc/postgresql/15/main/pg_hba.conf
+    ln -s /usr/trim/bin/useradd /usr/sbin/useradd &&\
+    rm -rf /usr/sbin/groupadd &&\
+    ln -s /usr/trim/bin/groupadd /usr/sbin/groupadd
+
+RUN echo "%Administrators ALL=(ALL:ALL) ALL" >> /etc/sudoers &&\
+    sed -e 's/peer/trust/' -e 's/scram-sha-256/trust/' -i /etc/postgresql/15/main/pg_hba.conf &&\
+    echo "local all all  trust" >> /etc/postgresql/15/main/pg_hba.conf &&\
+    echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/15/main/pg_hba.conf &&\
+    echo "host trim_connect tc 127.0.0.1/32 trust" >> /etc/postgresql/15/main/pg_hba.conf &&\
+    echo "listen_addresses = '*'" >> /etc/postgresql/15/main/postgresql.conf &&\
+    echo "trim_root root postgres" >> /etc/postgresql/15/main/pg_ident.conf &&\
+    echo "trim_root postgres postgres" >> /etc/postgresql/15/main/pg_ident.conf &&\
+    sed -e "s/\$2}' | grep/\$2}' |awk -F '@' '{print \$1}'| grep/g" -i /usr/trim/bin/show_startup_info.sh
+
 RUN echo "Users:x:1001:" >> /etc/group && \
     echo "Administrators:x:1000:" >> /etc/group
-RUN rm -rf /etc/systemd/system/multi-user.target.wants/docker.service
+
+RUN rm -rf /etc/systemd/system/multi-user.target.wants/auto_thumbnailer.service &&\
+    mv /etc/systemd/system/auto_thumbnailer.service /etc/systemd/system/auto_thumbnailer.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/share_management.service &&\
+    mv /etc/systemd/system/share_management.service /etc/systemd/system/share_management.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/smbftpd.service &&\
+    mv /etc/systemd/system/smbftpd.service /etc/systemd/system/smbftpd.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/docker.service &&\
+    mv /etc/systemd/system/docker.service /etc/systemd/system/docker.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/dockermgr.service &&\
+    mv /etc/systemd/system/dockermgr.service /etc/systemd/system/dockermgr.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/dsmgr.service &&\
+    mv /etc/systemd/system/dsmgr.service /etc/systemd/system/dsmgr.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/avahi.service &&\
+    mv /etc/systemd/system/avahi.service /etc/systemd/system/avahi.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/trim_connect.service &&\
+    mv /etc/systemd/system/trim_connect.service /etc/systemd/system/trim_connect.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/webdav.service &&\
+    mv /etc/systemd/system/webdav.service /etc/systemd/system/webdav.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/trim_file_monitor.service &&\
+    mv /etc/systemd/system/trim_file_monitor.service /etc/systemd/system/trim_file_monitor.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/trim_trashbind.service &&\
+    mv /etc/systemd/system/trim_trashbind.service /etc/systemd/system/trim_trashbind.service.bak
+
 STOPSIGNAL SIGINT
-CMD [ "/lib/systemd/systemd", "log-level=info", "unit=sysinit.target"]
+CMD [ "/lib/systemd/systemd", "log-level=info"]
