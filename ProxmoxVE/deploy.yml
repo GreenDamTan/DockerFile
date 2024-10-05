@@ -1,8 +1,10 @@
 services:
   pve:
-    image: makedie/proxmox_ve:8.2.6
-    container_name: pve-8.2.6
+    image: makedie/proxmox_ve:8.2.7
+    container_name: pve-8.2.7
     tty: true
+    environment:
+      root_password: "root"
     devices:
       - /dev/dri
       - /dev/fuse
@@ -22,6 +24,7 @@ services:
       #- /sys/fs/cgroup:/sys/fs/cgroup:ro
       #- /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
       - /sys/fs/fuse:/sys/fs/fuse
+      # - /usr/dockerFile/pve/pve-cluster:/var/lib/pve-cluster
       # - /usr/dockerFile/pve/vz:/var/lib/vz
     tmpfs:
       - /tmp
@@ -29,7 +32,6 @@ services:
       - /var/cache
       - /run/lock
     extra_hosts:
-      - "pve:127.0.0.1"
       - "shop.maurer-it.com:127.0.0.1"
     hostname: pve
     stop_grace_period: 2m
