@@ -8,6 +8,9 @@ LABEL git="github.com/GreenDamTan/DockerFile"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV container=docker
 
+RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-custom && \
+    echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-custom
+
 RUN echo "root:root"|chpasswd && \
     apt update &&\
     apt install -y --no-install-recommends ca-certificates apt-utils &&\
@@ -21,9 +24,9 @@ RUN apt install -y --no-install-recommends systemd &&\
     apt-get clean &&\
     busybox --install
 
-RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.20-394.deb &&\
-    dpkg -i TRIM-0.8.20-394.deb &&\
-    rm -f TRIM-0.8.20-394.deb
+RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.21-419.deb &&\
+    dpkg -i TRIM-0.8.21-419.deb &&\
+    rm -f TRIM-0.8.21-419.deb
 
 COPY etc.tar /usr/trim
 RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
@@ -39,10 +42,11 @@ RUN apt install -y --no-install-recommends libturbojpeg0 libraw-bin libopencv-co
     apt-get clean
 
 RUN apt install -y --no-install-recommends libpcre3 libpci-dev ffmpeg \
-    libsqlite3-0 libbluray2 libsmbclient \
+    libsqlite3-0 libbluray2 libavahi-client3\
     libtcmalloc-minimal4 libopenmpt0 libnl-3-200 libglib2.0-0 \
     libvpx7 libnm0 libaio1 libwebpmux3 \
     libnl-route-3-200 libupnp13 dmidecode libzvbi0 sudo libmp3lame0 libopus0 libtheora0 &&\
+    apt -o Dpkg::Options::="--force-overwrite" install -y --no-install-recommends libsmbclient &&\
     apt-get clean
 
 RUN ln -s /usr/trim/lib/libndev.so /usr/lib/x86_64-linux-gnu/libndev.so && \
