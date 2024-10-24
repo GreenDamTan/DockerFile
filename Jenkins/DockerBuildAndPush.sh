@@ -1,4 +1,6 @@
-docker build -t makedie/jenkins:2.387.2-lts-jdk17-openj9 .
-docker push makedie/jenkins:2.387.2-lts-jdk17-openj9
-docker tag makedie/jenkins:2.387.2-lts-jdk17-openj9 makedie/jenkins:latest
-docker push makedie/jenkins:latest
+name=makedie/jenkins
+tag=2.462.3-lts-jdk17-openj9-17.0.12.1_7-jdk
+docker build -t $name:$tag .
+docker push $name:$tag
+docker tag $name:$tag $name:latest
+docker push $name:latest
