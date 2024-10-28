@@ -1,6 +1,6 @@
 services:
   pve:
-    image: makedie/fnos:0.8.21_test
+    image: makedie/fnos:0.8.22-438_test
     container_name: fnOS
     tty: true
     devices:
@@ -17,7 +17,7 @@ services:
       - SYS_ADMIN
       - NET_ADMIN
     ports:
-      - 8088:8000
+      - 5666:5666
       - 5432:5432
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro

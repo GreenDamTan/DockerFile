@@ -24,9 +24,9 @@ RUN apt install -y --no-install-recommends systemd &&\
     apt-get clean &&\
     busybox --install
 
-RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.21-419.deb &&\
-    dpkg -i TRIM-0.8.21-419.deb &&\
-    rm -f TRIM-0.8.21-419.deb
+RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.22-438.deb &&\
+    dpkg -i TRIM-0.8.22-438.deb &&\
+    rm -f TRIM-0.8.22-438.deb
 
 COPY etc.tar /usr/trim
 RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
@@ -47,6 +47,10 @@ RUN apt install -y --no-install-recommends libpcre3 libpci-dev ffmpeg \
     libvpx7 libnm0 libaio1 libwebpmux3 \
     libnl-route-3-200 libupnp13 dmidecode libzvbi0 sudo libmp3lame0 libopus0 libtheora0 &&\
     apt -o Dpkg::Options::="--force-overwrite" install -y --no-install-recommends libsmbclient &&\
+    apt-get clean
+
+#trim_nginx
+RUN apt install -y libarchive13 &&\
     apt-get clean
 
 RUN ln -s /usr/trim/lib/libndev.so /usr/lib/x86_64-linux-gnu/libndev.so && \
