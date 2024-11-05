@@ -1,6 +1,6 @@
 services:
-  pve:
-    image: makedie/fnos:0.8.22-438_test
+  fnos:
+    image: makedie/fnos:0.8.23-458_test
     container_name: fnOS
     tty: true
     devices:

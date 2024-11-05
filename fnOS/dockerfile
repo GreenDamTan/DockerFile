@@ -24,9 +24,9 @@ RUN apt install -y --no-install-recommends systemd &&\
     apt-get clean &&\
     busybox --install
 
-RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.22-438.deb &&\
-    dpkg -i TRIM-0.8.22-438.deb &&\
-    rm -f TRIM-0.8.22-438.deb
+RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.23-458.deb &&\
+    dpkg -i TRIM-0.8.23-458.deb &&\
+    rm -f TRIM-0.8.23-458.deb
 
 COPY etc.tar /usr/trim
 RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
