@@ -1,7 +1,7 @@
 services:
   pve:
-    image: makedie/proxmox_ve:8.2.7
-    container_name: pve-8.2.7
+    image: makedie/proxmox_ve:8.2.8
+    container_name: pve-8.2.8
     tty: true
     environment:
       root_password: "root"

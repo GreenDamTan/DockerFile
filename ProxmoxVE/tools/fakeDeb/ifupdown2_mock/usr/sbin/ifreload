@@ -1,5 +1,5 @@
 echo "ifreload $@" | systemd-cat -p warning
 if [ $1 == '-V' ] || [ $1 == '-v' ]
 then
-   echo "ifupdown2:3.2.0-1+pmx3"
+   echo "ifupdown2:9.9.9-1+pmx9"
 fi

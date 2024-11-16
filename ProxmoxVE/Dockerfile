@@ -1,8 +1,8 @@
-FROM debian:bookworm-20240904 as builder1
+FROM debian:bookworm-20241111 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
-ARG pve_manager_ver=8.2.7
+ARG pve_manager_ver=8.2.8
 ARG proxmox_ve_ver=8.2.0
 
 ENV container=docker
@@ -19,11 +19,12 @@ RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/00-custom && \
     echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-custom
 
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources &&\
-    sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources
-
-RUN echo "root:root"|chpasswd && \
-    apt update &&\
-    apt install -y --no-install-recommends ca-certificates && \
+    sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources &&\
+    echo 'LANG=en_US.UTF-8' > /etc/default/locale &&\
+    echo "root:root"|chpasswd && \
+    apt-get update &&\
+    apt-get install -y apt-utils &&\
+    apt-get install -y --no-install-recommends ca-certificates && \
     sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources && \
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
@@ -45,13 +46,14 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-RUN apt update &&\
-    apt install -y --no-install-recommends wget curl screen vim systemctl busybox &&\
+#openvswitch-switch is test
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox openvswitch-switch &&\
     busybox --install &&\
     systemctl set-default multi-user.target &&\
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\
-    apt update &&\
+    apt-get update &&\
     echo "install pve-manager and proxmox-ve" &&\
     apt-get -y --no-install-recommends install pve-manager=${pve_manager_ver} proxmox-ve=${proxmox_ve_ver} && \
     echo "#clean" &&\
@@ -61,30 +63,29 @@ RUN apt update &&\
 COPY tools/pve-fake-subscription_0.0.9.deb /tmp/
 RUN dpkg -i /tmp/pve-fake-subscription_*.deb &&\
     rm -rf /tmp/pve-fake-subscription_*.deb &&\
-    /usr/bin/pve-fake-subscription
+    /usr/bin/pve-fake-subscription || echo ''
 
 RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list && \
     systemctl disable corosync &&\
-    systemctl disable apparmor.service &&\
-    systemctl disable getty@tty1 && \
     systemctl disable postfix && \
-    systemctl disable ssh.service &&\
     echo "no HA" &&\
     systemctl disable pve-ha-lrm.service &&\
     systemctl disable pve-ha-crm.service &&\
-    echo "no firewall" &&\
-    systemctl disable pve-firewall.service &&\
-    systemctl disable pvefw-logger &&\
     echo "no pvescheduler" &&\
     systemctl disable pvescheduler.service &&\
     echo "no spice" &&\
     systemctl disable spiceproxy.service || echo ok
 
-RUN systemctl mask pve-firewall.service
+RUN systemctl mask apparmor.service &&\
+    echo "no firewall" && \
+    systemctl mask pve-firewall.service pvefw-logger
 
 RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\
     systemctl enable pvebanner.service
+
+VOLUME /var/lib/pve-cluster
+VOLUME /var/lib/vz
 
 COPY tools/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
