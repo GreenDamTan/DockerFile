@@ -2,7 +2,7 @@ FROM debian:bookworm-20241111 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
-ARG pve_manager_ver=8.2.8
+ARG pve_manager_ver=8.2.9
 ARG proxmox_ve_ver=8.2.0
 
 ENV container=docker
@@ -60,25 +60,27 @@ RUN apt-get update &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 
+#reduce pveproxy pvedaemon workers
+#https://github.com/proxmox/pve-manager/blob/c1689ccb1065a83be900bca61c2a56314126f4ea/PVE/Service/pvedaemon.pm#L18
+#https://github.com/proxmox/pve-manager/blob/c1689ccb1065a83be900bca61c2a56314126f4ea/PVE/Service/pveproxy.pm#L32
+RUN sed "s/max_workers => 3/max_workers => 1/g" \
+    -i /usr/share/perl5/PVE/Service/pveproxy.pm \
+    -i /usr/share/perl5/PVE/Service/pvedaemon.pm
+
 COPY tools/pve-fake-subscription_0.0.9.deb /tmp/
 RUN dpkg -i /tmp/pve-fake-subscription_*.deb &&\
     rm -rf /tmp/pve-fake-subscription_*.deb &&\
     /usr/bin/pve-fake-subscription || echo ''
 
-RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list && \
-    systemctl disable corosync &&\
-    systemctl disable postfix && \
+RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
+    systemctl mask apparmor.service postfix.service spiceproxy.service &&\
+    systemctl mask pve-daily-update.timer apt-daily-upgrade.timer apt-daily.timer &&\
+    echo "no firewall" &&\
+    systemctl mask pve-firewall.service pvefw-logger &&\
     echo "no HA" &&\
-    systemctl disable pve-ha-lrm.service &&\
-    systemctl disable pve-ha-crm.service &&\
+    systemctl mask pve-ha-lrm.service pve-ha-crm.service corosync &&\
     echo "no pvescheduler" &&\
-    systemctl disable pvescheduler.service &&\
-    echo "no spice" &&\
-    systemctl disable spiceproxy.service || echo ok
-
-RUN systemctl mask apparmor.service &&\
-    echo "no firewall" && \
-    systemctl mask pve-firewall.service pvefw-logger
+    systemctl mask pvescheduler.service
 
 RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\
