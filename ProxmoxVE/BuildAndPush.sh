@@ -1,5 +1,5 @@
 name=makedie/proxmox_ve
-tag=8.2.9
+tag=8.3.0
 #DOCKER_BUILDKIT=1 docker build --network host -t $name:$tag .
 docker build -t $name:$tag .
 docker push $name:$tag

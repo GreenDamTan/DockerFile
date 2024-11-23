@@ -2,8 +2,9 @@ FROM debian:bookworm-20241111 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
-ARG pve_manager_ver=8.2.9
-ARG proxmox_ve_ver=8.2.0
+ARG pve_manager_ver=8.3.0
+ARG proxmox_ve_ver=8.3.0
+ARG qemu_server_ver=8.3.0
 
 ENV container=docker
 
@@ -55,7 +56,7 @@ RUN apt-get update &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\
     apt-get update &&\
     echo "install pve-manager and proxmox-ve" &&\
-    apt-get -y --no-install-recommends install pve-manager=${pve_manager_ver} proxmox-ve=${proxmox_ve_ver} && \
+    apt-get -y --no-install-recommends install pve-manager=${pve_manager_ver} proxmox-ve=${proxmox_ve_ver} qemu-server=${qemu_server_ver} && \
     echo "#clean" &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
