@@ -1,4 +1,4 @@
-FROM debian:bookworm-20240926 as builder1
+FROM debian:bookworm-20241111 as builder1
 #base mirrow
 
 LABEL GreenDamTan="GreenDamTan"
@@ -12,45 +12,45 @@ RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-custom && \
     echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-custom
 
 RUN echo "root:root"|chpasswd && \
-    apt update &&\
-    apt install -y --no-install-recommends ca-certificates apt-utils &&\
+    apt-get update &&\
+    apt-get install -y --no-install-recommends ca-certificates apt-utils &&\
     apt-get clean &&\
     sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources &&\
-    apt update
+    apt-get update
 
-RUN apt install -y --no-install-recommends systemd &&\
+RUN apt-get install -y --no-install-recommends systemd &&\
     systemctl set-default multi-user.target &&\
-    apt install -y --no-install-recommends wget curl screen vim busybox &&\
+    apt-get install -y --no-install-recommends wget curl screen vim busybox &&\
     apt-get clean &&\
     busybox --install
 
-RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.24-469.deb &&\
-    dpkg -i TRIM-0.8.24-469.deb &&\
-    rm -f TRIM-0.8.24-469.deb
+RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.25-506.deb &&\
+    dpkg -i TRIM-0.8.25-506.deb &&\
+    rm -f TRIM-0.8.25-506.deb
 
 COPY etc.tar /usr/trim
 RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
 
-RUN apt install -y --no-install-recommends postgresql-15 libcurl4 \
+RUN apt-get install -y --no-install-recommends postgresql-15 libcurl4 \
     ifenslave wpasupplicant network-manager pppoe pppoeconf \
     lvm2 mdadm btrfs-progs parted smartmontools cifs-utils dosfstools exfat-fuse ntfs-3g hdparm &&\
     apt-get clean
 
-RUN apt install -y --no-install-recommends libturbojpeg0 libraw-bin libopencv-core406 \
+RUN apt-get install -y --no-install-recommends libturbojpeg0 libraw-bin libopencv-core406 \
     libopencv-imgcodecs406 libyuv0 libheif1 libmagick++-6.q16-8 libexiv2-27 libgoogle-perftools4 \
     libzmq5 &&\
     apt-get clean
 
-RUN apt install -y --no-install-recommends libpcre3 libpci-dev ffmpeg \
+RUN apt-get install -y --no-install-recommends libpcre3 libpci-dev ffmpeg \
     libsqlite3-0 libbluray2 libavahi-client3\
     libtcmalloc-minimal4 libopenmpt0 libnl-3-200 libglib2.0-0 \
     libvpx7 libnm0 libaio1 libwebpmux3 \
     libnl-route-3-200 libupnp13 dmidecode libzvbi0 sudo libmp3lame0 libopus0 libtheora0 &&\
-    apt -o Dpkg::Options::="--force-overwrite" install -y --no-install-recommends libsmbclient &&\
+    apt-get -o Dpkg::Options::="--force-overwrite" install -y --no-install-recommends libsmbclient &&\
     apt-get clean
 
 #trim_nginx
-RUN apt install -y libarchive13 &&\
+RUN apt-get install -y libarchive13 &&\
     apt-get clean
 
 RUN ln -s /usr/trim/lib/libndev.so /usr/lib/x86_64-linux-gnu/libndev.so && \
@@ -71,6 +71,8 @@ RUN echo "%Administrators ALL=(ALL:ALL) ALL" >> /etc/sudoers &&\
     echo "local all all  trust" >> /etc/postgresql/15/main/pg_hba.conf &&\
     echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/15/main/pg_hba.conf &&\
     echo "host trim_connect tc 127.0.0.1/32 trust" >> /etc/postgresql/15/main/pg_hba.conf &&\
+    echo "host trim_sharelink share 127.0.0.1/32 trust" >> /etc/postgresql/15/main/pg_hba.conf &&\
+    echo "host trim_sac trim_sac_admin 127.0.0.1/32 trust" >> /etc/postgresql/15/main/pg_hba.conf &&\
     echo "listen_addresses = '*'" >> /etc/postgresql/15/main/postgresql.conf &&\
     echo "trim_root root postgres" >> /etc/postgresql/15/main/pg_ident.conf &&\
     echo "trim_root postgres postgres" >> /etc/postgresql/15/main/pg_ident.conf &&\
