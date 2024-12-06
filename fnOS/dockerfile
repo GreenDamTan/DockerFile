@@ -1,4 +1,4 @@
-FROM debian:bookworm-20241111 as builder1
+FROM debian:bookworm-20241202 as builder1
 #base mirrow
 
 LABEL GreenDamTan="GreenDamTan"
@@ -24,9 +24,9 @@ RUN apt-get install -y --no-install-recommends systemd &&\
     apt-get clean &&\
     busybox --install
 
-RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.25-506.deb &&\
-    dpkg -i TRIM-0.8.25-506.deb &&\
-    rm -f TRIM-0.8.25-506.deb
+RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.26-516.deb &&\
+    dpkg -i TRIM-0.8.26-516.deb &&\
+    rm -f TRIM-0.8.26-516.deb
 
 COPY etc.tar /usr/trim
 RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
@@ -77,6 +77,8 @@ RUN echo "%Administrators ALL=(ALL:ALL) ALL" >> /etc/sudoers &&\
     echo "trim_root root postgres" >> /etc/postgresql/15/main/pg_ident.conf &&\
     echo "trim_root postgres postgres" >> /etc/postgresql/15/main/pg_ident.conf &&\
     sed -e "s/\$2}' | grep/\$2}' |awk -F '@' '{print \$1}'| grep/g" -i /usr/trim/bin/show_startup_info.sh
+
+COPY fix_script/fix.sh /root
 
 RUN echo "Users:x:1001:" >> /etc/group && \
     echo "Administrators:x:1000:" >> /etc/group
