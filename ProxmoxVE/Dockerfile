@@ -1,8 +1,8 @@
-FROM debian:bookworm-20241111 as builder1
+FROM debian:bookworm-20241202 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
-ARG pve_manager_ver=8.3.0
+ARG pve_manager_ver=8.3.1
 ARG proxmox_ve_ver=8.3.0
 ARG qemu_server_ver=8.3.0
 
