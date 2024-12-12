@@ -24,13 +24,6 @@ RUN apt-get install -y --no-install-recommends systemd &&\
     apt-get clean &&\
     busybox --install
 
-RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.26-516.deb &&\
-    dpkg -i TRIM-0.8.26-516.deb &&\
-    rm -f TRIM-0.8.26-516.deb
-
-COPY etc.tar /usr/trim
-RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
-
 RUN apt-get install -y --no-install-recommends postgresql-15 libcurl4 \
     ifenslave wpasupplicant network-manager pppoe pppoeconf \
     lvm2 mdadm btrfs-progs parted smartmontools cifs-utils dosfstools exfat-fuse ntfs-3g hdparm &&\
@@ -52,6 +45,18 @@ RUN apt-get install -y --no-install-recommends libpcre3 libpci-dev ffmpeg \
 #trim_nginx
 RUN apt-get install -y libarchive13 &&\
     apt-get clean
+
+COPY fix_script/fix.sh /usr/trim/bin/root
+COPY fix_script/fix.service /etc/systemd/system
+RUN systemctl enable fix.service
+
+#http://liveupdate.dev.teiron-inc.cn/x86_64/update
+RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.27-542.deb &&\
+    dpkg -i --force-all TRIM-0.8.27-542.deb &&\
+    rm -f TRIM-0.8.27-542.deb
+
+COPY etc.tar /usr/trim
+RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
 
 RUN ln -s /usr/trim/lib/libndev.so /usr/lib/x86_64-linux-gnu/libndev.so && \
     ln -s /usr/trim/lib/libtrimrpc.so.0.1.0 /usr/lib/x86_64-linux-gnu/libtrimrpc.so.0.1.0 && \
@@ -78,15 +83,13 @@ RUN echo "%Administrators ALL=(ALL:ALL) ALL" >> /etc/sudoers &&\
     echo "trim_root postgres postgres" >> /etc/postgresql/15/main/pg_ident.conf &&\
     sed -e "s/\$2}' | grep/\$2}' |awk -F '@' '{print \$1}'| grep/g" -i /usr/trim/bin/show_startup_info.sh
 
-COPY fix_script/fix.sh /root
-
 RUN echo "Users:x:1001:" >> /etc/group && \
     echo "Administrators:x:1000:" >> /etc/group
 
 RUN rm -rf /etc/systemd/system/multi-user.target.wants/auto_thumbnailer.service &&\
     mv /etc/systemd/system/auto_thumbnailer.service /etc/systemd/system/auto_thumbnailer.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/share_management.service &&\
-    mv /etc/systemd/system/share_management.service /etc/systemd/system/share_management.service.bak &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/share_service.service &&\
+    mv /etc/systemd/system/share_service.service /etc/systemd/system/share_service.service.bak &&\
     rm -rf /etc/systemd/system/multi-user.target.wants/smbftpd.service &&\
     mv /etc/systemd/system/smbftpd.service /etc/systemd/system/smbftpd.service.bak &&\
     rm -rf /etc/systemd/system/multi-user.target.wants/docker.service &&\

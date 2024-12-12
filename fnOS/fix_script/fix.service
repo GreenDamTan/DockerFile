@@ -1,0 +1,12 @@
+[Unit]
+Description=fix trim
+After=postgresql@15-main.service
+Wants=postgresql@15-main.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/trim/bin/fix.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
