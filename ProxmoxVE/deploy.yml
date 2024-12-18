@@ -5,6 +5,7 @@ services:
     tty: true
     environment:
       root_password: "root"
+      #port: 9527
     devices:
       - /dev/dri
       - /dev/fuse
@@ -16,14 +17,16 @@ services:
       - /dev/nvidia-uvm-tools
       - /dev/nvidia-vgpu1
     cap_add:
-      - SYS_ADMIN
+      #- SYS_ADMIN
       - NET_ADMIN
     ports:
       - 8006:8006
+    #network_mode: host
     volumes:
       #- /sys/fs/cgroup:/sys/fs/cgroup:ro
       #- /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
       - /sys/fs/fuse:/sys/fs/fuse
+      - /var/run/openvswitch:/host/var/run/openvswitch
       # - /usr/dockerFile/pve/pve-cluster:/var/lib/pve-cluster
       # - /usr/dockerFile/pve/vz:/var/lib/vz
     tmpfs:
@@ -33,6 +36,7 @@ services:
       - /run/lock
     extra_hosts:
       - "shop.maurer-it.com:127.0.0.1"
+      #- "pve:192.168.6.66"
     hostname: pve
     stop_grace_period: 2m
     privileged: true
