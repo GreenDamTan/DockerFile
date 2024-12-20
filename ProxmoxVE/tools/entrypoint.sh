@@ -22,6 +22,7 @@ fi
 
 for i in `ip -o link show | awk -F': ' '{print $2}' |awk -F '@' '{print $1}'| grep -w -v 'lo' | grep -v '^docker' | grep -v '^br-'`;
 do
+  if grep -iq "${i}" /etc/network/interfaces; then echo "${i} is exists"; continue; fi
   if [[ ${i} == *"ovs"* ]]; then
       echo "ovs ink detect ${i}"
       echo -e "\niface ${i} inet manual\n        ovs_type OVSBridge" >> /etc/network/interfaces

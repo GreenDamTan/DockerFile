@@ -2,9 +2,6 @@ FROM debian:bookworm-20241202 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
-ARG pve_manager_ver=8.3.1
-ARG proxmox_ve_ver=8.3.0
-ARG qemu_server_ver=8.3.2
 
 ENV container=docker
 
@@ -47,6 +44,10 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
+ARG pve_manager_ver=8.3.2
+ARG proxmox_ve_ver=8.3.0
+ARG qemu_server_ver=8.3.3
+
 #openvswitch-switch is test
 RUN apt-get update &&\
     apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox openvswitch-switch &&\
@@ -67,6 +68,14 @@ RUN apt-get update &&\
 RUN sed "s/max_workers => 3/max_workers => 1/g" \
     -i /usr/share/perl5/PVE/Service/pveproxy.pm \
     -i /usr/share/perl5/PVE/Service/pvedaemon.pm
+
+# pve-cluster/src/pmxcfs/pmxcfs.c patch 127.
+RUN hexdump -ve '1/1 "%.2X"' /usr/bin/pmxcfs > /usr/bin/pmxcfs.hex &&\
+    rm -f /usr/bin/pmxcfs &&\
+    sed -e 's/003132372E/003532372E/g' -i /usr/bin/pmxcfs.hex &&\
+    xxd -r -p /usr/bin/pmxcfs.hex > /usr/bin/pmxcfs &&\
+    chmod a+x /usr/bin/pmxcfs &&\
+    rm -f /usr/bin/pmxcfs.hex
 
 COPY tools/pve-fake-subscription_0.0.9.deb /tmp/
 RUN dpkg -i /tmp/pve-fake-subscription_*.deb &&\

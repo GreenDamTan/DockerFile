@@ -12,26 +12,15 @@
 auto lo
 iface lo inet loopback
 
-iface eth0 inet manual
-
-auto vmbr0
 iface vmbr0 inet manual
         bridge-ports none
         bridge-stp off
         bridge-fd 0
 
-auto vmbr1
-iface vmbr1 inet manual
-        bridge-ports none
-        bridge-stp off
-        bridge-fd 0
-
-auto br-lan
 iface br-lan inet manual
         bridge-ports none
         bridge-stp off
         bridge-fd 0
 
-auto ovs_eth0
 iface ovs_eth0 inet manual
         ovs_type OVSBridge
