@@ -51,9 +51,10 @@ COPY fix_script/fix.service /etc/systemd/system
 RUN systemctl enable fix.service
 
 #http://liveupdate.dev.teiron-inc.cn/x86_64/update
-RUN wget -q https://download.liveupdate.fnnas.com/x86_64/trim/TRIM-0.8.28-564-41225.deb &&\
-    dpkg -i --force-all TRIM-0.8.28-564-41225.deb &&\
-    rm -f TRIM-0.8.28-564-41225.deb
+RUN PKG=TRIM-0.8.29-568-122621.deb &&\
+    wget -q https://download.liveupdate.fnnas.com/x86_64/trim/${PKG} &&\
+    dpkg -i --force-all ${PKG} &&\
+    rm -f ${PKG}
 
 COPY etc.tar /usr/trim
 RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
