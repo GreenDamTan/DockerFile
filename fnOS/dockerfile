@@ -46,12 +46,12 @@ RUN apt-get install -y --no-install-recommends libpcre3 libpci-dev ffmpeg \
 RUN apt-get install -y libarchive13 &&\
     apt-get clean
 
-COPY fix_script/fix.sh /usr/trim/bin
-COPY fix_script/fix.service /etc/systemd/system
+COPY fix_script/fix.sh /usr/trim/bin/
+COPY fix_script/fix.service /etc/systemd/system/
 RUN systemctl enable fix.service
 
 #http://liveupdate.dev.teiron-inc.cn/x86_64/update
-RUN PKG=TRIM-0.8.29-568-122621.deb &&\
+RUN PKG=TRIM-0.8.32-591-25161957.deb &&\
     wget -q https://download.liveupdate.fnnas.com/x86_64/trim/${PKG} &&\
     dpkg -i --force-all ${PKG} &&\
     rm -f ${PKG}
