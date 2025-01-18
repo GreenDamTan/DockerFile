@@ -1,4 +1,4 @@
-FROM debian:bookworm-20241202 as builder1
+FROM debian:bookworm-20250113 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
@@ -50,8 +50,9 @@ ARG qemu_server_ver=8.3.3
 
 #openvswitch-switch is test
 RUN apt-get update &&\
-    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox openvswitch-switch &&\
+    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils openvswitch-switch &&\
     busybox --install &&\
+    update-pciids &&\
     systemctl set-default multi-user.target &&\
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\
@@ -80,6 +81,7 @@ RUN hexdump -ve '1/1 "%.2X"' /usr/bin/pmxcfs > /usr/bin/pmxcfs.hex &&\
 COPY tools/pve-fake-subscription_0.0.9.deb /tmp/
 RUN dpkg -i /tmp/pve-fake-subscription_*.deb &&\
     rm -rf /tmp/pve-fake-subscription_*.deb &&\
+    sed -e "s/YajuuSenpai/github.com\/greendamtan\//g" -i /usr/bin/pve-fake-subscription &&\
     /usr/bin/pve-fake-subscription || echo ''
 
 RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\

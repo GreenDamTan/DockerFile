@@ -31,4 +31,6 @@ done
 
 [ -d "/host/var/run/openvswitch" ] && ln -s /host/var/run/openvswitch /var/run/ && echo "ln openvswitch"
 
+[ -f "/usr/bin/pve-fake-subscription" ] && /usr/bin/pve-fake-subscription
+
 exec "$@"
