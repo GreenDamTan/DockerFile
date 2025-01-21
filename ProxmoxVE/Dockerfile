@@ -63,6 +63,27 @@ RUN apt-get update &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 
+#patch for ramfb
+#https://github.com/proxmox/qemu-server/blob/9ebec81f019ffbe33c4f35754066fa2b92fab4f7/PVE/QemuServer.pm#L187
+#https://github.com/proxmox/qemu-server/blob/9ebec81f019ffbe33c4f35754066fa2b92fab4f7/PVE/QemuServer.pm#L1688
+#https://github.com/proxmox/qemu-server/blob/9ebec81f019ffbe33c4f35754066fa2b92fab4f7/PVE/QemuServer.pm#L3662
+#https://github.com/proxmox/pve-manager/blob/f157a38b211595d67e72c9a9a819947668171f75/www/manager6/Utils.js#L610
+RUN sed -e "s/virtio virtio-gl vmware)/virtio virtio-gl vmware ramfb)/g" \
+    -e "s/'virtio-gl' => 'virtio-vga-gl',/'virtio-gl' => 'virtio-gpu-gl','ramfb' => 'ramfb',/g" \
+    -i /usr/share/perl5/PVE/QemuServer.pm &&\
+    sed -z "s/vga->{type} ne 'none'){\n\tpush @\$devices, '-device', print_vga_device(\n\t    \$conf, \$vga, \$arch, \$machine_version, \$machine_type, undef, \$qxlnum, \$bridges);/vga->{type} ne 'none'){ if (\$vga->{type} eq 'ramfb'){ push @\$devices, '-device', 'ramfb'; } else { push @\$devices, '-device', print_vga_device( \$conf, \$vga, \$arch, \$machine_version, \$machine_type, undef, \$qxlnum, \$bridges);}/g" -i /usr/share/perl5/PVE/QemuServer.pm &&\
+    sed -z "s/virtio: 'VirtIO-GPU',\n\t'virtio-gl': 'VirGL GPU',/virtio: 'VirtIO-GPU',\n\t'virtio-gl': 'VirGL GPU',ramfb: 'ramfb',/g" -i  /usr/share/pve-manager/js/pvemanagerlib.js
+
+#patch for efi preEnrolledKeys
+#https://github.com/proxmox/pve-manager/blob/f157a38b211595d67e72c9a9a819947668171f75/www/manager6/qemu/HDEfi.js#L70
+RUN sed -z "s/name: 'preEnrolledKeys',\n\t\tchecked: true,/name: 'preEnrolledKeys',\n\t\tchecked: false,/g" -i /usr/share/pve-manager/js/pvemanagerlib.js
+
+#patch for qemu-agent
+#https://github.com/proxmox/pve-manager/blob/f157a38b211595d67e72c9a9a819947668171f75/www/manager6/qemu/Options.js#L274
+#https://github.com/proxmox/pve-manager/blob/f157a38b211595d67e72c9a9a819947668171f75/www/manager6/qemu/SystemEdit.js#L150
+RUN sed -z "s/header: 'QEMU Guest Agent',\n\t\tdefaultValue: false,/header: 'QEMU Guest Agent',\n\t\tdefaultValue: false,/g" -i  /usr/share/pve-manager/js/pvemanagerlib.js &&\
+    sed -z "s/defaultValue: 0,\n\t    deleteDefaultValue: true,\n\t    fieldLabel: gettext('Qemu Agent'),/defaultValue: 1, checked: true, fieldLabel: gettext('Qemu Agent'),/g" -i  /usr/share/pve-manager/js/pvemanagerlib.js
+
 #reduce pveproxy pvedaemon workers
 #https://github.com/proxmox/pve-manager/blob/c1689ccb1065a83be900bca61c2a56314126f4ea/PVE/Service/pvedaemon.pm#L18
 #https://github.com/proxmox/pve-manager/blob/c1689ccb1065a83be900bca61c2a56314126f4ea/PVE/Service/pveproxy.pm#L32
