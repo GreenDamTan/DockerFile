@@ -87,6 +87,15 @@ pve-ha-crm.service
 corosync
 pvescheduler.service
 ```
+## 新增显示设备ramfb
+原版PVE没有该设备，容器版本新增一个ramfb作为显示设备
+
+## 默认禁用UEFI的preEnrolledKeys
+原版PVE创建EFI固件时会默认启用安全启动秘钥，容器版本默认行为是不启用
+
+## 默认启用qemu-ga
+原版PVE不会启用qemu-ga，容器版本默认启用
+
 ## pve-cluster的pmxcfs组件
 pmxcfs的IP检查被修改，可以接受127开头的IP  
 原版不允许使用127开头的IP地址

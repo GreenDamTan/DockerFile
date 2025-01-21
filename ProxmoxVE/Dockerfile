@@ -19,11 +19,22 @@ RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/00-custom && \
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources &&\
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources &&\
     echo 'LANG=en_US.UTF-8' > /etc/default/locale &&\
+    echo 'LANGUAGE=en_US:en' >> /etc/default/locale &&\
+    echo 'LC_ALL=C.UTF-8' >> /etc/default/locale &&\
     echo "root:root"|chpasswd && \
     apt-get update &&\
     apt-get install -y apt-utils &&\
     apt-get install -y --no-install-recommends ca-certificates && \
     sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources && \
+    apt-get clean &&\
+    rm -rf /var/lib/apt/lists/*
+
+#openvswitch-switch is test
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils openvswitch-switch &&\
+    busybox --install &&\
+    update-pciids &&\
+    systemctl set-default multi-user.target &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 
@@ -48,13 +59,7 @@ ARG pve_manager_ver=8.3.2
 ARG proxmox_ve_ver=8.3.0
 ARG qemu_server_ver=8.3.3
 
-#openvswitch-switch is test
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils openvswitch-switch &&\
-    busybox --install &&\
-    update-pciids &&\
-    systemctl set-default multi-user.target &&\
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
+RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\
     apt-get update &&\
     echo "install pve-manager and proxmox-ve" &&\
@@ -104,6 +109,8 @@ RUN dpkg -i /tmp/pve-fake-subscription_*.deb &&\
     rm -rf /tmp/pve-fake-subscription_*.deb &&\
     sed -e "s/YajuuSenpai/github.com\/greendamtan\//g" -i /usr/bin/pve-fake-subscription &&\
     /usr/bin/pve-fake-subscription || echo ''
+
+COPY tools/romfile/CWWK.bin /usr/share/kvm/
 
 RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
     systemctl mask apparmor.service postfix.service spiceproxy.service &&\
