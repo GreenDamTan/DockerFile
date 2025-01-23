@@ -10,7 +10,7 @@ services:
       - /dev/dri
       - /dev/fuse
       - /dev/kvm
-      - /dev/vfio
+      #- /dev/vfio
       - /dev/nvidia0
       - /dev/nvidiactl
       - /dev/nvidia-uvm
@@ -25,6 +25,8 @@ services:
     volumes:
       #- /sys/fs/cgroup:/sys/fs/cgroup:ro
       #- /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
+      - /dev/vfio:/dev/vfio
+      - /dev/bus/usb:/dev/bus/usb
       - /sys/fs/fuse:/sys/fs/fuse
       - /var/run/openvswitch:/host/var/run/openvswitch
       # - /usr/dockerFile/pve/pve-cluster:/var/lib/pve-cluster
