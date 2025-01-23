@@ -1,0 +1,9 @@
+services:
+  dls:
+    image: makedie/fastapi-dls:1.5.1
+    restart: always
+    environment:
+      - DLS_URL="192.168.6.6"
+      - DLS_PORT=404
+    ports:
+      - "404:443"
