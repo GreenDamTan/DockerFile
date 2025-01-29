@@ -31,7 +31,7 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debi
 
 #openvswitch-switch is test
 RUN apt-get update &&\
-    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils openvswitch-switch &&\
+    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils mdevctl openvswitch-switch &&\
     busybox --install &&\
     update-pciids &&\
     systemctl set-default multi-user.target &&\
@@ -55,9 +55,9 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-ARG pve_manager_ver=8.3.2
+ARG pve_manager_ver=8.3.3
 ARG proxmox_ve_ver=8.3.0
-ARG qemu_server_ver=8.3.3
+ARG qemu_server_ver=8.3.6
 
 RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\

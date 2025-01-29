@@ -1,11 +1,12 @@
 services:
   pve:
-    image: makedie/proxmox_ve:8.3.2
-    container_name: pve-8.3.2
+    image: makedie/proxmox_ve:8.3.3
+    container_name: pve
     tty: true
     environment:
       root_password: "root"
       #port: 9527
+      setting_ssh_port: 22
     devices:
       - /dev/dri
       - /dev/fuse
