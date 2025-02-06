@@ -1,4 +1,4 @@
-FROM debian:bookworm-20250113 as builder1
+FROM debian:bookworm-20250203 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
@@ -57,7 +57,7 @@ RUN echo "build mock" &&\
 
 ARG pve_manager_ver=8.3.3
 ARG proxmox_ve_ver=8.3.0
-ARG qemu_server_ver=8.3.6
+ARG qemu_server_ver=8.3.7
 
 RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\
