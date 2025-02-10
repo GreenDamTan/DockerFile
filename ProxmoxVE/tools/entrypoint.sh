@@ -53,4 +53,6 @@ fi
 
 [ -f "/usr/bin/pve-fake-subscription" ] && /usr/bin/pve-fake-subscription
 
+[ ! -f "/var/log/pve-firewall.log" ] && echo -e "You are runing PVE in dokcer. \nMore information in : https://hub.docker.com/r/makedie/proxmox_ve \n" > /var/log/pve-firewall.log
+
 exec "$@"

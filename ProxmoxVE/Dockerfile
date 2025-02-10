@@ -4,6 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
 
 ENV container=docker
+ENV LC_ALL=C.UTF-8 LANGUAGE=C.UTF-8 LANG=C.UTF-8
 
 LABEL GreenDamTan="GreenDamTan"
 LABEL maintainer="github.com/GreenDamTan"
@@ -12,15 +13,15 @@ LABEL git="github.com/GreenDamTan/DockerFile"
 USER 0:0
 EXPOSE 8006:8006
 
-RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/00-custom && \
-    echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-custom && \
+RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/01-custom && \
+    echo 'APT::Install-Recommends "0";' > /etc/apt/apt.conf.d/00-custom && \
     echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-custom
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone
 
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources &&\
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources &&\
-    echo 'LANG=en_US.UTF-8' > /etc/default/locale &&\
-    echo 'LANGUAGE=en_US:en' >> /etc/default/locale &&\
-    echo 'LC_ALL=C.UTF-8' >> /etc/default/locale &&\
     echo "root:root"|chpasswd && \
     apt-get update &&\
     apt-get install -y apt-utils &&\
@@ -68,16 +69,22 @@ RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm p
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 
-#patch for ramfb
+#patch for ramfb & mdev
 #https://github.com/proxmox/qemu-server/blob/9ebec81f019ffbe33c4f35754066fa2b92fab4f7/PVE/QemuServer.pm#L187
 #https://github.com/proxmox/qemu-server/blob/9ebec81f019ffbe33c4f35754066fa2b92fab4f7/PVE/QemuServer.pm#L1688
 #https://github.com/proxmox/qemu-server/blob/9ebec81f019ffbe33c4f35754066fa2b92fab4f7/PVE/QemuServer.pm#L3662
 #https://github.com/proxmox/pve-manager/blob/f157a38b211595d67e72c9a9a819947668171f75/www/manager6/Utils.js#L610
-RUN sed -e "s/virtio virtio-gl vmware)/virtio virtio-gl vmware ramfb)/g" \
-    -e "s/'virtio-gl' => 'virtio-vga-gl',/'virtio-gl' => 'virtio-gpu-gl','ramfb' => 'ramfb',/g" \
+RUN sed -e "s/virtio virtio-gl vmware)/virtio virtio-gl vmware ramfb mdev)/g" \
+    -e "s/'virtio-gl' => 'virtio-vga-gl',/'virtio-gl' => 'virtio-gpu-gl','ramfb' => 'ramfb','mdev' => 'mdev',/g" \
     -i /usr/share/perl5/PVE/QemuServer.pm &&\
-    sed -z "s/vga->{type} ne 'none'){\n\tpush @\$devices, '-device', print_vga_device(\n\t    \$conf, \$vga, \$arch, \$machine_version, \$machine_type, undef, \$qxlnum, \$bridges);/vga->{type} ne 'none'){ if (\$vga->{type} eq 'ramfb'){ push @\$devices, '-device', 'ramfb'; } else { push @\$devices, '-device', print_vga_device( \$conf, \$vga, \$arch, \$machine_version, \$machine_type, undef, \$qxlnum, \$bridges);}/g" -i /usr/share/perl5/PVE/QemuServer.pm &&\
-    sed -z "s/virtio: 'VirtIO-GPU',\n\t'virtio-gl': 'VirGL GPU',/virtio: 'VirtIO-GPU',\n\t'virtio-gl': 'VirGL GPU',ramfb: 'ramfb',/g" -i  /usr/share/pve-manager/js/pvemanagerlib.js
+    sed -z "s/vga->{type} ne 'none'){\n\tpush @\$devices, '-device', print_vga_device(\n\t    \$conf, \$vga, \$arch, \$machine_version, \$machine_type, undef, \$qxlnum, \$bridges);/vga->{type} ne 'none'){ if (\$vga->{type} eq 'ramfb'){ push @\$devices, '-device', 'ramfb'; } else { if (\$vga->{type} ne 'mdev'){ push @\$devices, '-device', print_vga_device( \$conf, \$vga, \$arch, \$machine_version, \$machine_type, undef, \$qxlnum, \$bridges); } }/g" \
+    -i /usr/share/perl5/PVE/QemuServer.pm &&\
+    sed -e "s/rombar => {/ramfb => { type => 'boolean', description =>  \"Show mdev device's ramfb\", optional => 1, default => 0, },\nrombar => {/g" \
+    -e "s/\$devicestr .= \",id=\${id}\${mf_addr}\${pciaddr}\${mf_addr}\";/\$devicestr .= \",id=\${id}\${mf_addr}\${pciaddr}\${mf_addr}\"; my \$mdevtype = \$d->{mdev} ; if (\$mdevtype =~ \/^(.*?)-\/) { \$mdevtype = \$1; }/g" \
+    -e "s/push @\$devices, '-device', \$devicestr;/ if (\$mdevtype \&\& \$vga->{type} eq 'mdev'){ \$devicestr .= \",display=on\"; if (\$mdevtype eq \"i915\"){ \$devicestr .= \",x-igd-opregion=on\" ; } \$devicestr .= \",ramfb=on\" if defined(\$d->{ramfb}); \$devicestr .= \",driver=vfio-pci-nohotplug\"; } push @\$devices, '-device', \$devicestr;/g" \
+    -i /usr/share/perl5/PVE/QemuServer/PCI.pm &&\
+    sed -z "s/virtio: 'VirtIO-GPU',\n\t'virtio-gl': 'VirGL GPU',/virtio: 'VirtIO-GPU',\n\t'virtio-gl': 'VirGL GPU',ramfb: 'ramfb',mdev: 'mdev',/g" \
+    -i /usr/share/pve-manager/js/pvemanagerlib.js
 
 #patch for efi preEnrolledKeys
 #https://github.com/proxmox/pve-manager/blob/f157a38b211595d67e72c9a9a819947668171f75/www/manager6/qemu/HDEfi.js#L70
@@ -103,6 +110,8 @@ RUN hexdump -ve '1/1 "%.2X"' /usr/bin/pmxcfs > /usr/bin/pmxcfs.hex &&\
     xxd -r -p /usr/bin/pmxcfs.hex > /usr/bin/pmxcfs &&\
     chmod a+x /usr/bin/pmxcfs &&\
     rm -f /usr/bin/pmxcfs.hex
+
+RUN echo "\nYou are runing PVE in dokcer. \nMore information in : https://hub.docker.com/r/makedie/proxmox_ve \n"  >> /etc/motd
 
 COPY tools/pve-fake-subscription_0.0.9.deb /tmp/
 RUN dpkg -i /tmp/pve-fake-subscription_*.deb &&\
