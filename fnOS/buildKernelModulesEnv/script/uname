@@ -1,0 +1,34 @@
+#!/bin/bash
+case $1 in
+-r)
+        echo "$(echo "$fake_uname_a" | sed -E 's/^[^ ]+ [^ ]+ ([^ ]+) .*/\1/')"
+;;
+-a)
+        echo "$fake_uname_a"
+;;
+-v)
+        echo "$(echo "$fake_uname_a" | sed -E 's/^[^ ]+ [^ ]+ [^ ]+ (.*)/\1/')"
+;;
+-m)
+        echo x86_64
+;;
+-p)
+	echo x86_64
+;;
+-i)
+	echo x86_64
+;;
+-s)
+	echo Linux
+;;
+-o)
+	echo "GNU/Linux"
+;;
+-n)
+	hostname
+;;
+esac
+
+if [ -z $1 ]; then
+	echo Linux
+fi

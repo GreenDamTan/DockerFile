@@ -1,0 +1,7 @@
+services:
+  kernHead:
+    container_name: kernHead-6.6.38-trim-92
+    tty: true
+    image: makedie/fnos:kernHead-6.6.38-trim-92
+    volumes:
+      - /vol1/1000/docker/kernHead-6.6.38-trim-92/workspace:/workspace:rw

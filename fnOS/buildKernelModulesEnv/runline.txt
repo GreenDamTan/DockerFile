@@ -1,0 +1,1 @@
+docker build -t makedie/fnos:kernHead-6.6.38-trim-92 -f 6.6.38-trim#92.dockerfile .
