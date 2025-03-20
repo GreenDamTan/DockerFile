@@ -22,13 +22,9 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debi
     rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update &&\
-    apt-get install -y --no-install-recommends wget curl screen vim busybox pciutils git &&\
+    apt-get install -y --no-install-recommends wget curl screen vim busybox pciutils git python3 &&\
+    apt-get install -y dkms build-essential libelf-dev bc cpio libpopt0 rsync bison flex dwarves ruby libncurses-dev libssl-dev lzma &&\
     busybox --install &&\
     update-pciids &&\
-    apt-get clean &&\
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update &&\
-    apt-get install -y dkms build-essential libelf-dev &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*

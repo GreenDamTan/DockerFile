@@ -3,3 +3,5 @@ docker build -t makedie/fnos:kernHead-baseEnv -f baseEnv.dockerfile .
 docker build -t makedie/fnos:kernHead-6.6.38-trim-92 -f 6.6.38-trim#92.dockerfile .
 
 docker build -t makedie/fnos:kernHead-6.12.5-trim-10 -f 6.12.5-trim#10.dockerfile .
+
+docker build -t makedie/fnos:kernHead-6.12.18-trim-3 -f 6.12.18-trim#3.dockerfile .
