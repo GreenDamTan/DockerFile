@@ -70,7 +70,8 @@ RUN systemctl mask apparmor.service postfix.service spiceproxy.service &&\
     echo "no HA" &&\
     systemctl mask pve-ha-lrm.service pve-ha-crm.service corosync &&\
     echo "no pvescheduler" &&\
-    systemctl mask pvescheduler.service
+    systemctl mask pvescheduler.service &&\
+    systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 
 RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\

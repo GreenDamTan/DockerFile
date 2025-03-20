@@ -1,4 +1,4 @@
-FROM debian:bookworm-20250203 as builder1
+FROM debian:bookworm-20250317 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/bookworm/pve-no-subscription/binary-amd64
@@ -56,15 +56,16 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-ARG pve_manager_ver=8.3.4
+ARG pve_manager_ver=8.3.5
 ARG proxmox_ve_ver=8.3.0
 ARG qemu_server_ver=8.3.8
+ARG pve_qemu_kvm_ver=9.1.2-3
 
 RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://mirrors.ustc.edu.cn/proxmox/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg &&\
     apt-get update &&\
     echo "install pve-manager and proxmox-ve" &&\
-    apt-get -y --no-install-recommends install pve-manager=${pve_manager_ver} proxmox-ve=${proxmox_ve_ver} qemu-server=${qemu_server_ver} && \
+    apt-get -y --no-install-recommends install pve-manager=${pve_manager_ver} proxmox-ve=${proxmox_ve_ver} qemu-server=${qemu_server_ver} pve-qemu-kvm=${pve_qemu_kvm_ver} && \
     echo "#clean" &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
@@ -129,7 +130,8 @@ RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
     echo "no HA" &&\
     systemctl mask pve-ha-lrm.service pve-ha-crm.service corosync &&\
     echo "no pvescheduler" &&\
-    systemctl mask pvescheduler.service
+    systemctl mask pvescheduler.service &&\
+    systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 
 RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\
