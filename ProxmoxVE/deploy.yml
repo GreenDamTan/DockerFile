@@ -1,6 +1,6 @@
 services:
   pve:
-    image: makedie/proxmox_ve:8.3.5
+    image: makedie/proxmox_ve:8.4.1
     container_name: pve
     tty: true
     environment:
@@ -39,8 +39,7 @@ services:
       - /run/lock
     extra_hosts:
       - "shop.maurer-it.com:127.0.0.1"
-      #- "pve:127.0.0.1"
-      #- "pve:192.168.6.66"
+      - "pve:192.168.6.66"
     hostname: pve
     stop_grace_period: 2m
     privileged: true

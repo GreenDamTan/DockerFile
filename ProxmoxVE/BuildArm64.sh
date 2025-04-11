@@ -1,1 +1,0 @@
-docker buildx build --platform=linux/arm64 -t makedie/proxmox_ve:8.3.2_dev-arm64 -f arm64.dockerfile .
