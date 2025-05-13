@@ -1,4 +1,4 @@
-FROM debian:bookworm-20250317 as builder1
+FROM debian:bookworm-20250407 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 ARG pve_mirror_url=https://download.lierfang.com/pxcloud/pxvirt/dists/bookworm/main/binary-amd64/
@@ -48,9 +48,9 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-ARG pve_manager_ver=8.3.5-2
+ARG pve_manager_ver=8.4.1
 ARG proxmox_ve_ver=8.3.1
-ARG qemu_server_ver=8.3.8+port5
+ARG qemu_server_ver=8.3.12-1
 ARG pve_qemu_kvm_ver=9.2.0-4
 
 RUN echo "deb https://download.lierfang.com/pxcloud/pxvirt bookworm main" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
