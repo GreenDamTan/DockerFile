@@ -1,4 +1,4 @@
 name=makedie/fastapi-dls
-tag=1.5.4
+tag=2.0.2
 docker build -t $name:$tag .
 docker push $name:$tag
