@@ -51,13 +51,15 @@ COPY fix_script/fix.service /etc/systemd/system/
 RUN systemctl enable fix.service
 
 #http://liveupdate.dev.teiron-inc.cn/x86_64/update
-RUN PKG=TRIM-0.8.35-629.deb &&\
+RUN PKG=fnos-0.9.4-869-202505151600.deb &&\
     wget -q https://download.liveupdate.fnnas.com/x86_64/trim/${PKG} &&\
     dpkg -i --force-all ${PKG} &&\
     rm -f ${PKG}
 
 COPY etc.tar /usr/trim
 RUN ls -l /usr/trim && tar -xf /usr/trim/etc.tar -C /usr/trim
+# make static machine_id
+RUN echo "0000000000000000000000000000000000000000" > /usr/trim/etc/machine_id
 
 RUN ln -s /usr/trim/lib/libndev.so /usr/lib/x86_64-linux-gnu/libndev.so && \
     ln -s /usr/trim/lib/libtrimrpc.so.0.1.0 /usr/lib/x86_64-linux-gnu/libtrimrpc.so.0.1.0 && \
@@ -87,7 +89,8 @@ RUN echo "%Administrators ALL=(ALL:ALL) ALL" >> /etc/sudoers &&\
 RUN echo "Users:x:1001:" >> /etc/group && \
     echo "Administrators:x:1000:" >> /etc/group
 
-RUN rm -rf /etc/systemd/system/multi-user.target.wants/auto_thumbnailer.service &&\
+RUN systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target &&\
+    rm -rf /etc/systemd/system/multi-user.target.wants/auto_thumbnailer.service &&\
     mv /etc/systemd/system/auto_thumbnailer.service /etc/systemd/system/auto_thumbnailer.service.bak &&\
     rm -rf /etc/systemd/system/multi-user.target.wants/share_service.service &&\
     mv /etc/systemd/system/share_service.service /etc/systemd/system/share_service.service.bak &&\

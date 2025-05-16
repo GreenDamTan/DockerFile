@@ -1,3 +1,5 @@
+#！/bin/bash
+
 #增加相关数据库
 
 # 创建用户（如果不存在）
@@ -16,3 +18,4 @@ END\$\$;"
 # 创建数据库并指定所有者
 psql -U postgres -c "CREATE DATABASE trim_sharelink OWNER share;" 2>/dev/null || echo "Database trim_sharelink already exists."
 psql -U postgres -c "CREATE DATABASE trim_sac OWNER trim_sac_admin;" 2>/dev/null || echo "Database trim_sac already exists."
+psql -U postgres -c "CREATE DATABASE ai_manager OWNER postgres;" 2>/dev/null || echo "Database trim_sac already exists."
