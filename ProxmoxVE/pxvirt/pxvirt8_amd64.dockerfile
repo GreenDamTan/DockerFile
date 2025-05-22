@@ -65,7 +65,7 @@ RUN echo "deb https://download.lierfang.com/pxcloud/pxvirt bookworm main" > /etc
 #reduce pveproxy pvedaemon workers
 #https://github.com/proxmox/pve-manager/blob/c1689ccb1065a83be900bca61c2a56314126f4ea/PVE/Service/pvedaemon.pm#L18
 #https://github.com/proxmox/pve-manager/blob/c1689ccb1065a83be900bca61c2a56314126f4ea/PVE/Service/pveproxy.pm#L32
-RUN sed "s/max_workers => 3/max_workers => 1/g" \
+RUN sed -e "s/max_workers => 3/max_workers => 1/g" \
     -i /usr/share/perl5/PVE/Service/pveproxy.pm \
     -i /usr/share/perl5/PVE/Service/pvedaemon.pm
 
@@ -88,6 +88,7 @@ RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
     systemctl mask pve-ha-lrm.service pve-ha-crm.service corosync &&\
     echo "no pvescheduler" &&\
     systemctl mask pvescheduler.service cron.service &&\
+    systemctl mask systemd-logind &&\
     systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 
 RUN systemctl enable pvestatd.service &&\
