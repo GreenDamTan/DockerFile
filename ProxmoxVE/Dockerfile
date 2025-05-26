@@ -39,6 +39,9 @@ RUN apt-get update &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 
+RUN cd /lib/systemd/system/sysinit.target.wants/ && rm $(ls | grep -v systemd-tmpfiles-setup) &&\
+    rm -f /lib/systemd/system/multi-user.target.wants/* /etc/systemd/system/*.wants/* /lib/systemd/system/local-fs.target.wants/* /lib/systemd/system/sockets.target.wants/*udev* /lib/systemd/system/sockets.target.wants/*initctl* /lib/systemd/system/basic.target.wants/* /lib/systemd/system/anaconda.target.wants/* /lib/systemd/system/plymouth* /lib/systemd/system/systemd-update-utmp*
+
 #RUN --mount=type=bind,target=/sys/fs/cgroup
 #RUN --mount=type=bind,target=/sys/fs/fuse
 #RUN --mount=type=tmpfs,destination=/tmp
@@ -141,6 +144,7 @@ RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\
     systemctl enable pvebanner.service
 
+VOLUME /sys/fs/cgroup
 VOLUME /var/lib/pve-cluster
 VOLUME /var/lib/vz
 

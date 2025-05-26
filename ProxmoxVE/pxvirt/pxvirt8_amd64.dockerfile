@@ -30,6 +30,9 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debi
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
 
+RUN cd /lib/systemd/system/sysinit.target.wants/ && rm $(ls | grep -v systemd-tmpfiles-setup) &&\
+    rm -f /lib/systemd/system/multi-user.target.wants/* /etc/systemd/system/*.wants/* /lib/systemd/system/local-fs.target.wants/* /lib/systemd/system/sockets.target.wants/*udev* /lib/systemd/system/sockets.target.wants/*initctl* /lib/systemd/system/basic.target.wants/* /lib/systemd/system/anaconda.target.wants/* /lib/systemd/system/plymouth* /lib/systemd/system/systemd-update-utmp*
+
 #openvswitch-switch is test
 RUN apt-get update &&\
     apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils mdevctl openvswitch-switch &&\
@@ -95,6 +98,7 @@ RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\
     systemctl enable pvebanner.service
 
+VOLUME /sys/fs/cgroup
 VOLUME /var/lib/pve-cluster
 VOLUME /var/lib/vz
 
