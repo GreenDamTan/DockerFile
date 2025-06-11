@@ -1,11 +1,11 @@
-FROM ibm-semeru-runtimes:open-21.0.7_6-jdk-focal as jre-build
+FROM ibm-semeru-runtimes:open-17.0.15_6-jdk-focal as jre-build
 RUN jlink \
          --add-modules ALL-MODULE-PATH \
          --no-man-pages \
          --compress=2 \
          --output /javaruntime
 
-FROM jenkins/jenkins:2.504.2-lts-jdk21
+FROM jenkins/jenkins:2.504.2-lts-jdk17
 LABEL GreenDamTan="GreenDamTan"
 LABEL maintainer="github.com/GreenDamTan"
 LABEL git="github.com/GreenDamTan/DockerFile"
@@ -26,10 +26,7 @@ ENV JAVA_OPTS="$JAVA_OPTS -Xtune:virtualized -Xshareclasses -Dhudson.model.Downl
 # 更换软件源就看需要不需要了
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources &&\
-    sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources \
-#RUN sed -i "s#updates.jenkins.io/download#mirrors.huaweicloud.com/jenkins#g" /var/jenkins_home/updates/default.json &&\
-#    sed -i 's#www.google.com#www.baidu.com#g'  /var/jenkins_home/updates/default.json &&\
-#    sed -i "s#https://updates.jenkins.io/update-center.json#https://mirrors.huaweicloud.com/jenkins/updates/update-center.json#g" /var/jenkins_home/hudson.model.UpdateCenter.xml
+    sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources
 # 安装busybox提供bash脚本诸如“[[]]”等写法的支持
 # 安装vim供文本编辑
 RUN apt-get clean &&\

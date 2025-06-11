@@ -1,0 +1,12 @@
+services:
+  jenkins:
+    container_name: jenkins
+    tty: true
+    image: makedie/jenkins:2.504.2-lts-jdk21-openj9-21.0.7_6-jdk
+    ports:
+      - "8080:8080/tcp"
+    volumes:
+      # change jenkins_home dir please
+      - /vol1/1000/docker/makedie_jenkins/var/jenkins_home:/var/jenkins_home:rw
+      - /usr/bin/docker:/usr/bin/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:rw

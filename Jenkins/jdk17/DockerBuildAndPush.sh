@@ -1,5 +1,5 @@
 name=makedie/jenkins
-tag=2.504.2-lts-jdk21-openj9-21.0.7_6-jdk
+tag=2.504.2-lts-jdk17-openj9-17.0.15_6-jdk
 docker build -t $name:$tag .
 docker push $name:$tag
 docker tag $name:$tag $name:latest
