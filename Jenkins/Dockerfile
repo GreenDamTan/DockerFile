@@ -1,11 +1,11 @@
-FROM ibm-semeru-runtimes:open-17.0.14_7-jdk-focal as jre-build
+FROM ibm-semeru-runtimes:open-17.0.15_6-jdk-focal as jre-build
 RUN jlink \
          --add-modules ALL-MODULE-PATH \
          --no-man-pages \
          --compress=2 \
          --output /javaruntime
 
-FROM jenkins/jenkins:2.492.2-lts-jdk17
+FROM jenkins/jenkins:2.504.2-lts-jdk17
 LABEL GreenDamTan="GreenDamTan"
 LABEL maintainer="github.com/GreenDamTan"
 LABEL git="github.com/GreenDamTan/DockerFile"
