@@ -1,46 +1,6 @@
-FROM debian:bookworm-20250407 as builder1
-#base mirrow
-ARG DEBIAN_FRONTEND=noninteractive
-ARG pve_mirror_url=https://download.lierfang.com/pxcloud/pxvirt/dists/bookworm/main/binary-amd64/
+FROM makedie/proxmox_ve:debian-bookworm-20250407 as builder1
 
-ENV container=docker
-ENV LC_ALL=C.UTF-8 LANGUAGE=C.UTF-8 LANG=C.UTF-8
-
-LABEL GreenDamTan="GreenDamTan"
-LABEL maintainer="github.com/GreenDamTan"
-LABEL git="github.com/GreenDamTan/DockerFile"
-
-USER 0:0
 EXPOSE 8006:8006
-
-RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/01-custom && \
-    echo 'APT::Install-Recommends "0";' > /etc/apt/apt.conf.d/00-custom && \
-    echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-custom
-
-RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
-    echo "Asia/Shanghai" > /etc/timezone
-
-RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources &&\
-    sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources &&\
-    echo "root:root"|chpasswd && \
-    apt-get update &&\
-    apt-get install -y apt-utils &&\
-    apt-get install -y --no-install-recommends ca-certificates && \
-    sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources && \
-    apt-get clean &&\
-    rm -rf /var/lib/apt/lists/*
-
-RUN cd /lib/systemd/system/sysinit.target.wants/ && rm $(ls | grep -v systemd-tmpfiles-setup) &&\
-    rm -f /lib/systemd/system/multi-user.target.wants/* /etc/systemd/system/*.wants/* /lib/systemd/system/local-fs.target.wants/* /lib/systemd/system/sockets.target.wants/*udev* /lib/systemd/system/sockets.target.wants/*initctl* /lib/systemd/system/basic.target.wants/* /lib/systemd/system/anaconda.target.wants/* /lib/systemd/system/plymouth* /lib/systemd/system/systemd-update-utmp*
-
-#openvswitch-switch is test
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils mdevctl openvswitch-switch &&\
-    busybox --install &&\
-    update-pciids &&\
-    systemctl set-default multi-user.target &&\
-    apt-get clean &&\
-    rm -rf /var/lib/apt/lists/*
 
 COPY tools/fakeDeb /tmp/
 RUN echo "build mock" &&\
@@ -53,8 +13,8 @@ RUN echo "build mock" &&\
 
 ARG pve_manager_ver=8.4.1
 ARG proxmox_ve_ver=8.3.1
-ARG qemu_server_ver=8.3.12-1
-ARG pve_qemu_kvm_ver=9.2.0-4
+ARG qemu_server_ver=8.3.12-2
+ARG pve_qemu_kvm_ver=9.2.0-5
 
 RUN echo "deb https://download.lierfang.com/pxcloud/pxvirt bookworm main" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     curl -L https://download.lierfang.com/pxcloud/pxvirt/pveport.gpg -o /etc/apt/trusted.gpg.d/pveport.gpg &&\
