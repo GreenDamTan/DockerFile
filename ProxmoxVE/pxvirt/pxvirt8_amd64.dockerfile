@@ -1,9 +1,10 @@
-FROM makedie/proxmox_ve:debian-bookworm-20250407 as builder1
+FROM makedie/proxmox_ve:debian-bookworm-20250630-amd64 as builder1
 
 EXPOSE 8006:8006
 
 COPY tools/fakeDeb /tmp/
 RUN echo "build mock" &&\
+    chmod -R a+r /tmp/. &&\
     dpkg-deb --build /tmp/ifupdown2_mock &&\
     dpkg-deb --build /tmp/ifenslave_mock &&\
     dpkg-deb --build /tmp/proxmox-kernel-helper_mock &&\
@@ -13,8 +14,8 @@ RUN echo "build mock" &&\
 
 ARG pve_manager_ver=8.4.1
 ARG proxmox_ve_ver=8.3.1
-ARG qemu_server_ver=8.3.12-2
-ARG pve_qemu_kvm_ver=9.2.0-5
+ARG qemu_server_ver=8.3.12-1
+ARG pve_qemu_kvm_ver=9.2.0-4
 
 RUN echo "deb https://download.lierfang.com/pxcloud/pxvirt bookworm main" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     curl -L https://download.lierfang.com/pxcloud/pxvirt/pveport.gpg -o /etc/apt/trusted.gpg.d/pveport.gpg &&\
@@ -58,7 +59,7 @@ RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\
     systemctl enable pvebanner.service
 
-VOLUME /sys/fs/cgroup
+#VOLUME /sys/fs/cgroup
 VOLUME /var/lib/pve-cluster
 VOLUME /var/lib/vz
 

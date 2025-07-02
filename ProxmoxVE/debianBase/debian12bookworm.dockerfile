@@ -1,4 +1,4 @@
-FROM debian:bookworm-20250407 as builder1
+FROM debian:bookworm-20250630 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -10,6 +10,10 @@ LABEL maintainer="github.com/GreenDamTan"
 LABEL git="github.com/GreenDamTan/DockerFile"
 
 USER 0:0
+
+RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/01-custom && \
+    echo 'APT::Install-Recommends "0";' > /etc/apt/apt.conf.d/00-custom && \
+    echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-custom
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone
