@@ -16,7 +16,8 @@ RUN echo 'APT::Get::Assume-Yes "1";' > /etc/apt/apt.conf.d/01-custom && \
     echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-custom
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
-    echo "Asia/Shanghai" > /etc/timezone
+    echo "Asia/Shanghai" > /etc/timezone && \
+    echo 'LANG=en_US.UTF-8' > /etc/default/locale
 
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources &&\
     sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources &&\
