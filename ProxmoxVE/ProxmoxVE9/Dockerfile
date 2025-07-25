@@ -23,9 +23,9 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-ARG pve_manager_ver=9.0.0~10
+ARG pve_manager_ver=9.0.0~11
 ARG proxmox_ve_ver=9.0.0
-ARG qemu_server_ver=9.0.4
+ARG qemu_server_ver=9.0.7
 ARG pve_qemu_kvm_ver=10.0.2-4
 
 RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve trixie pve-test" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
