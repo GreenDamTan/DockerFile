@@ -13,7 +13,7 @@ EXPOSE 8006:8006
 #RUN --mount=type=tmpfs,destination=/run
 #RUN --mount=type=tmpfs,destination=/run/lock
 
-COPY tools/fakeDeb /tmp/
+COPY ../tools/fakeDeb /tmp/
 RUN echo "build mock" &&\
     chmod -R a+r /tmp/. &&\
     dpkg-deb --build /tmp/ifupdown2_mock &&\
@@ -84,13 +84,13 @@ RUN hexdump -ve '1/1 "%.2X"' /usr/bin/pmxcfs > /usr/bin/pmxcfs.hex &&\
 
 RUN echo "\nYou are runing PVE in dokcer. \nMore information in : https://hub.docker.com/r/makedie/proxmox_ve \n"  >> /etc/motd
 
-COPY tools/pve-fake-subscription_0.0.9.deb /tmp/
+COPY ../tools/pve-fake-subscription_0.0.9.deb /tmp/
 RUN dpkg -i /tmp/pve-fake-subscription_*.deb &&\
     rm -rf /tmp/pve-fake-subscription_*.deb &&\
     sed -e "s/YajuuSenpai/github.com\/greendamtan\//g" -i /usr/bin/pve-fake-subscription &&\
     /usr/bin/pve-fake-subscription || echo ''
 
-COPY tools/romfile/CWWK.bin /usr/share/kvm/
+COPY ../tools/romfile/CWWK.bin /usr/share/kvm/
 
 RUN rm -rf /etc/apt/sources.list.d/pve-enterprise.list &&\
     systemctl mask apparmor.service postfix.service spiceproxy.service &&\
@@ -112,7 +112,7 @@ RUN systemctl enable pvestatd.service &&\
 VOLUME /var/lib/pve-cluster
 VOLUME /var/lib/vz
 
-COPY tools/entrypoint.sh /
+COPY ../tools/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
 
