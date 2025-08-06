@@ -1,4 +1,4 @@
-FROM debian:trixie-20250630 as builder1
+FROM debian:trixie-20250721 as builder1
 #base mirrow
 ARG DEBIAN_FRONTEND=noninteractive
 

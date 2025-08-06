@@ -1,4 +1,4 @@
-FROM makedie/proxmox_ve:debian-trixie-20250630-amd64 as builder1
+FROM makedie/proxmox_ve:debian-trixie-20250721-amd64 as builder1
 
 #ARG pve_mirror_url=https://mirrors.ustc.edu.cn/proxmox/debian/dists/trixie/pve-test/binary-amd64/
 
@@ -23,12 +23,12 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-ARG pve_manager_ver=9.0.0~11
+ARG pve_manager_ver=9.0.3
 ARG proxmox_ve_ver=9.0.0
-ARG qemu_server_ver=9.0.7
+ARG qemu_server_ver=9.0.16
 ARG pve_qemu_kvm_ver=10.0.2-4
 
-RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve trixie pve-test" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
+RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve trixie pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     wget https://enterprise.proxmox.com/debian/proxmox-archive-keyring-trixie.gpg -O /etc/apt/trusted.gpg.d/proxmox-archive-keyring.gpg &&\
     apt-get update &&\
     echo "install pve-manager and proxmox-ve" &&\
