@@ -23,7 +23,8 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debi
 
 RUN apt-get update &&\
     apt-get install -y --no-install-recommends wget curl screen vim busybox pciutils git python3 &&\
-    apt-get install -y dkms build-essential libelf-dev bc cpio libpopt0 rsync bison flex dwarves ruby libncurses-dev libssl-dev lzma &&\
+    apt-get install -y dkms build-essential libelf-dev bc cpio libpopt0 rsync bison flex dwarves ruby libncurses-dev libssl-dev lzma devscripts debhelper dh-dkms &&\
+    apt-get install -y libncurses5-dev libncursesw5-dev &&\
     busybox --install &&\
     update-pciids &&\
     apt-get clean &&\
