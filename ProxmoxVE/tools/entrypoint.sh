@@ -8,8 +8,9 @@ fi
 if [ -z "$setting_ssh_port" ];
   then
     printf 'not define the ssh_port,do mask sshd \n'
-    systemctl disable sshd
-    systemctl mask sshd
+    #printf 'not define the ssh_port,do mask sshd \n'
+    #systemctl disable sshd
+    #systemctl mask sshd
   else
     printf 'define the ssh_port,do config ssh_port %s\n' "$setting_ssh_port"
     sed -i "s/.*Port.*/Port $setting_ssh_port/g" /etc/ssh/sshd_config
@@ -44,7 +45,7 @@ done
 
 if [ -z "$setting_no_mock_hosts" ]; then
   hostname=`uname -n`
-  if [[ -z `cat /etc/hosts |grep -v "fe" |grep -v "127" |grep $hostname ` ]]; then
+  if [[ -z `cat /etc/hosts |grep -v "fe" |grep -v "127" |grep -v "::" |grep $hostname ` ]]; then
     if grep -iq "192.168.6.66" /etc/hosts; then echo "mock hosts is exists"; else echo "192.168.6.66 `uname -n`" >> /etc/hosts; fi;
   fi
 fi

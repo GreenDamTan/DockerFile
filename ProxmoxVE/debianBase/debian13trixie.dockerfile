@@ -31,9 +31,11 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debi
 
 #openvswitch-switch is test
 RUN apt-get update &&\
-    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils mdevctl openvswitch-switch &&\
+    apt-get install -y --no-install-recommends wget curl screen vim systemctl busybox pciutils mdevctl openvswitch-switch locales &&\
     busybox --install &&\
     update-pciids &&\
+    locale-gen en_US.UTF-8 &&\
+    localedef -i en_US -f UTF-8 en_US.UTF-8 &&\
     systemctl set-default multi-user.target &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/*

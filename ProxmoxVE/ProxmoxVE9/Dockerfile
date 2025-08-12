@@ -23,7 +23,7 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-ARG pve_manager_ver=9.0.3
+ARG pve_manager_ver=9.0.4
 ARG proxmox_ve_ver=9.0.0
 ARG qemu_server_ver=9.0.16
 ARG pve_qemu_kvm_ver=10.0.2-4
@@ -71,8 +71,7 @@ RUN systemctl enable pvestatd.service &&\
     systemctl enable pveproxy.service &&\
     systemctl enable pvebanner.service
 
-VOLUME /var/lib/pve-cluster
-VOLUME /var/lib/vz
+VOLUME ["/var/lib/pve-cluster","/var/lib/vz","/var/log"]
 
 COPY tools/entrypoint.sh /
 RUN chmod +x /entrypoint.sh
