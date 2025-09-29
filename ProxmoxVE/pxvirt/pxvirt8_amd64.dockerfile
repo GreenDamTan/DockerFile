@@ -12,10 +12,10 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-ARG pve_manager_ver=8.4.1
+ARG pve_manager_ver=8.4.10
 ARG proxmox_ve_ver=8.3.1
-ARG qemu_server_ver=8.3.12-1
-ARG pve_qemu_kvm_ver=9.2.0-4
+ARG qemu_server_ver=8.4.1
+ARG pve_qemu_kvm_ver=9.2.0-5+port3
 
 RUN echo "deb https://download.lierfang.com/pxcloud/pxvirt bookworm main" > /etc/apt/sources.list.d/pve-no-subscription.list &&\
     curl -L https://download.lierfang.com/pxcloud/pxvirt/pveport.gpg -o /etc/apt/trusted.gpg.d/pveport.gpg &&\

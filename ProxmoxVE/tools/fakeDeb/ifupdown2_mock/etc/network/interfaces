@@ -17,6 +17,11 @@ iface vmbr0 inet manual
         bridge-stp off
         bridge-fd 0
 
+iface docker0 inet manual
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0
+
 iface br-lan inet manual
         bridge-ports none
         bridge-stp off

@@ -23,9 +23,9 @@ RUN echo "build mock" &&\
     dpkg -i /tmp/*_mock.deb &&\
     rm -rf /tmp/*_mock*
 
-ARG pve_manager_ver=8.4.5
+ARG pve_manager_ver=8.4.9
 ARG proxmox_ve_ver=8.4.0
-ARG qemu_server_ver=8.4.1
+ARG qemu_server_ver=8.4.3
 ARG pve_qemu_kvm_ver=9.2.0-7
 
 RUN echo "deb https://mirrors.ustc.edu.cn/proxmox/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list &&\

@@ -1,6 +1,6 @@
 services:
   pve:
-    image: makedie/proxmox_ve:8.4.1
+    image: makedie/proxmox_ve:8.4.9
     container_name: pve
     tty: true
     environment:
