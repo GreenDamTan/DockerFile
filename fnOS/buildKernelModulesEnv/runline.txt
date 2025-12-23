@@ -1,7 +1,10 @@
-docker build -t makedie/fnos:kernHead-baseEnv -f baseEnv.dockerfile .
+docker build --platform=linux/arm64 -t makedie/fnos:kernHead-baseEnv-arm64 -f baseEnv.dockerfile .
+docker build --platform=linux/amd64 -t makedie/fnos:kernHead-baseEnv-amd64 -f baseEnv.dockerfile .
 
 docker build -t makedie/fnos:kernHead-6.6.38-trim-92 -f 6.6.38-trim#92.dockerfile .
 
 docker build -t makedie/fnos:kernHead-6.12.5-trim-10 -f 6.12.5-trim#10.dockerfile .
 
 docker build -t makedie/fnos:kernHead-6.12.18-trim-3 -f 6.12.18-trim#3.dockerfile .
+
+docker build --platform=linux/arm64 -t makedie/fnos:kernHead-6.12.41-trim-27-arm64-rk35xx -f 6.12.41-trim-27-arm64-rk35xx.dockerfile .

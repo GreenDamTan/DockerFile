@@ -10,13 +10,13 @@ case $1 in
         echo "$(echo "$fake_uname_a" | sed -E 's/^[^ ]+ [^ ]+ [^ ]+ (.*)/\1/')"
 ;;
 -m)
-        echo x86_64
+        echo "$fake_uname_a" | awk '{print $(NF-1)}'
 ;;
 -p)
-	echo x86_64
+	echo unknown
 ;;
 -i)
-	echo x86_64
+	echo unknown
 ;;
 -s)
 	echo Linux
