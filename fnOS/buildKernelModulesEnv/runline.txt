@@ -8,3 +8,5 @@ docker build -t makedie/fnos:kernHead-6.12.5-trim-10 -f 6.12.5-trim#10.dockerfil
 docker build -t makedie/fnos:kernHead-6.12.18-trim-3 -f 6.12.18-trim#3.dockerfile .
 
 docker build --platform=linux/arm64 -t makedie/fnos:kernHead-6.12.41-trim-27-arm64-rk35xx -f 6.12.41-trim-27-arm64-rk35xx.dockerfile .
+
+docker build --platform=linux/arm64 -t makedie/fnos:kernHead-6.12.41-trim-27-arm64-armsr -f 6.12.41-trim-28_arm64-armsr.dockerfile .
