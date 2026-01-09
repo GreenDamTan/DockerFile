@@ -44,32 +44,7 @@ RUN systemctl disable boot-efi.mount &&\
     systemctl disable nfs-idmapd.service nfs-blkmap.service systemd-update-utmp.service rpcbind.service getty@tty1.service nut-server.service nut-monitor.service &&\
     systemctl disable libvirtd.service
 
-RUN systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/auto_thumbnailer.service &&\
-    mv /etc/systemd/system/auto_thumbnailer.service /etc/systemd/system/auto_thumbnailer.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/share_service.service &&\
-    mv /etc/systemd/system/share_service.service /etc/systemd/system/share_service.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/smbftpd.service &&\
-    mv /etc/systemd/system/smbftpd.service /etc/systemd/system/smbftpd.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/docker.service &&\
-    mv /etc/systemd/system/docker.service /etc/systemd/system/docker.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/dockermgr.service &&\
-    mv /etc/systemd/system/dockermgr.service /etc/systemd/system/dockermgr.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/dsmgr.service &&\
-    mv /etc/systemd/system/dsmgr.service /etc/systemd/system/dsmgr.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/avahi.service &&\
-    mv /etc/systemd/system/avahi.service /etc/systemd/system/avahi.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/trim_connect.service &&\
-    mv /etc/systemd/system/trim_connect.service /etc/systemd/system/trim_connect.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/webdav.service &&\
-    mv /etc/systemd/system/webdav.service /etc/systemd/system/webdav.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/trim_file_monitor.service &&\
-    mv /etc/systemd/system/trim_file_monitor.service /etc/systemd/system/trim_file_monitor.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/trim_trashbind.service &&\
-    mv /etc/systemd/system/trim_trashbind.service /etc/systemd/system/trim_trashbind.service.bak &&\
-    rm -rf /etc/systemd/system/multi-user.target.wants/trim_wayland.service &&\
-    mv /etc/systemd/system/trim_wayland.service /etc/systemd/system/trim_wayland.service.bak && \
-    mv /usr/lib/systemd/system/systemd-remount-fs.service /usr/lib/systemd/system/systemd-remount-fs.service.bak
+RUN systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 
 STOPSIGNAL SIGINT
 CMD [ "/lib/systemd/systemd", "log-level=info"]
