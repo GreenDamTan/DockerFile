@@ -1,7 +1,7 @@
 FROM makedie/fnos:kernHead-baseEnv-amd64
 
 RUN PKG=linux-headers-6.18.18-trim_6.18.18-trim-427_amd64.deb &&\
-    wget https://download.liveupdate.fnnas.com/arm/kernel/${PKG} &&\
+    wget https://download.liveupdate.fnnas.com/x86_64/kernel/${PKG} &&\
     dpkg -i --force-all ${PKG} &&\
     rm -f ${PKG}
 
