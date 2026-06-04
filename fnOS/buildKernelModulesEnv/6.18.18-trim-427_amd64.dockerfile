@@ -1,7 +1,12 @@
 FROM makedie/fnos:kernHead-baseEnv-amd64
 
-RUN PKG=linux-headers-6.18.18-trim_6.18.18-trim-427_amd64.deb &&\
-    wget https://download.liveupdate.fnnas.com/x86_64/kernel/${PKG} &&\
+COPY script/signforfn.sh /usr/bin/signforfn.sh
+
+ENV BaseURL="https://download.liveupdate.fnnas.com/x86_64/kernel"
+ENV PKG="linux-headers-6.18.18-trim_6.18.18-trim-427_amd64.deb"
+ENV dlkey="NxgGGmkvKxgVPyo4N2c2bDwLFm4="
+
+RUN wget $(bash -c "/usr/bin/signforfn.sh ${dlkey} ${BaseURL}/${PKG}") -O ${PKG} &&\
     dpkg -i --force-all ${PKG} &&\
     rm -f ${PKG}
 

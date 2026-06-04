@@ -14,3 +14,9 @@ docker build --platform=linux/arm64 -t makedie/fnos:kernHead-6.12.41-trim-27-arm
 docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.6-trim-297-amd64 -f 6.18.6-trim-297_amd64.dockerfile .
 
 docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.18-trim-427-amd64 -f 6.18.18-trim-427_amd64.dockerfile .
+
+docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.18-trim-570-amd64 -f 6.18.18-trim-570_amd64.dockerfile .
+
+docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.18-trim-587-amd64 -f 6.18.18-trim-587_amd64.dockerfile .
+
+docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.18-trim-717-amd64 -f 6.18.18-trim-717_amd64.dockerfile .
