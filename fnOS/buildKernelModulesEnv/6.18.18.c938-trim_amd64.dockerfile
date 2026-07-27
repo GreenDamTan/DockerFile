@@ -1,0 +1,29 @@
+FROM makedie/fnos:kernHead-baseEnv-amd64
+
+COPY script/signforfn.sh /usr/bin/signforfn.sh
+#    {
+#      "packageName": "linux-headers-6.18.18.c938-trim",
+#      "version": "6.18.18.c938-trim-938",
+#      "url": "https://download.liveupdate.fnnas.com/x86_64/kernel/linux-headers-6.18.18.c938-trim_6.18.18.c938-trim-938_amd64.deb",
+#      "sign": "1ea7db60feb0de26b2788d54d677bb39f23a0c8bae7ce1c1c0037dc884a0968a",
+#      "size": "8.9M",
+#      "dlkey": "NxgGGmkvKxgVPyo4N2c2bDwLFm4=",
+#      "installSpace": "10M",
+#      "description": "headers"
+#    },
+
+ENV BaseURL="https://download.liveupdate.fnnas.com/x86_64/kernel"
+ENV PKG="linux-headers-6.18.18.c938-trim_6.18.18.c938-trim-938_amd64.deb"
+ENV dlkey="NxgGGmkvKxgVPyo4N2c2bDwLFm4="
+
+RUN wget $(bash -c "/usr/bin/signforfn.sh ${dlkey} ${BaseURL}/${PKG}") -O ${PKG} &&\
+    dpkg -i --force-all ${PKG} &&\
+    rm -f ${PKG}
+
+ENV fake_uname_a="Linux GreenDamTan 6.18.18.c938-trim #938 SMP PREEMPT_DYNAMIC Thu Jul 16 04:29:13 UTC 2026 x86_64 GNU/Linux"
+COPY script/uname /tmp
+RUN mv -f /tmp/uname /usr/bin/uname && \
+    chmod a+x /usr/bin/uname &&\
+    uname -r &&\
+    uname -v &&\
+    uname -a
