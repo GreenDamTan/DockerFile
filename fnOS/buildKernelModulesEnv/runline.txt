@@ -30,3 +30,5 @@ docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.18.c938-trim-a
 docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.18.c952-trim-amd64 -f 6.18.18.c952-trim_amd64.dockerfile .
 
 docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.18.c1032-trim-amd64 -f 6.18.18.c1032-trim_amd64.dockerfile .
+
+docker build --platform=linux/amd64 -t makedie/fnos:kernHead-6.18.18.c1078-trim-amd64 -f 6.18.18.c1078-trim_amd64.dockerfile .
