@@ -6,6 +6,7 @@
 .idea/
 .settings/
 .vscode/
+/tmp/
 */.DS_Store
 Desktop.ini
 /fnOS/iso/*
